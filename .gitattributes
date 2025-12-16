@@ -1,5 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-*.data.gz filter=lfs diff=lfs merge=lfs -text
-*.wasm.gz filter=lfs diff=lfs merge=lfs -text
-Chimp[[:space:]]War/Build/Chimp[[:space:]]War.data filter=lfs diff=lfs merge=lfs -text
+
+# Unity WebGL build files (Git LFS)
+Chimp[[:space:]]War/Build/ChimpWar.data filter=lfs diff=lfs merge=lfs -text
+Chimp[[:space:]]War/Build/ChimpWar.wasm filter=lfs diff=lfs merge=lfs -text

@@ -155,12 +155,10 @@
         /* Glow ring around logo */
         .glow-ring {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            inset: 0;
+            margin: auto;
             width: 140px;
             height: 140px;
-            margin-left: -70px;
-            margin-top: -70px;
             border: 2px solid rgba(249, 115, 22, 0.3);
             border-radius: 50%;
             animation: pulse-ring 2s ease-out infinite;
@@ -693,12 +691,12 @@
         }
 
         var buildUrl = "../Chimp War/Build";
-        var loaderUrl = buildUrl + "/Chimp War.loader.js";
+        var loaderUrl = buildUrl + "/ChimpWar.loader.js";
         var config = {
-            dataUrl: buildUrl + "/Chimp War.data",
-            frameworkUrl: buildUrl + "/Chimp War.framework.js",
-            codeUrl: buildUrl + "/Chimp War.wasm",
-            symbolsUrl: buildUrl + "/Chimp War.symbols.json",
+            dataUrl: buildUrl + "/ChimpWar.data",
+            frameworkUrl: buildUrl + "/ChimpWar.framework.js",
+            codeUrl: buildUrl + "/ChimpWar.wasm",
+            symbolsUrl: buildUrl + "/ChimpWar.symbols.json",
             streamingAssetsUrl: "../Chimp War/StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
