@@ -691,12 +691,14 @@
         }
 
         var buildUrl = "../Chimp War/Build";
+        // DATA FILE: Hosted on GitHub Releases (216MB)
+        var dataUrl = "https://github.com/alexloukine/ape-war-site/releases/download/assets-v1/ChimpWar.data.gz";
         var loaderUrl = buildUrl + "/ChimpWar.loader.js";
         var config = {
-            dataUrl: buildUrl + "/ChimpWar.data",
-            frameworkUrl: buildUrl + "/ChimpWar.framework.js",
-            codeUrl: buildUrl + "/ChimpWar.wasm",
-            symbolsUrl: buildUrl + "/ChimpWar.symbols.json",
+            dataUrl: dataUrl,
+            frameworkUrl: buildUrl + "/ChimpWar.framework.js.gz",
+            codeUrl: buildUrl + "/ChimpWar.wasm.gz",
+            symbolsUrl: buildUrl + "/ChimpWar.symbols.json.gz",
             streamingAssetsUrl: "../Chimp War/StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",

@@ -1,0 +1,32 @@
+{
+  "headers": [
+    {
+      "source": "/(.*).wasm.gz",
+      "headers": [
+        { "key": "Content-Type", "value": "application/wasm" },
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    },
+    {
+      "source": "/(.*).data.gz",
+      "headers": [
+        { "key": "Content-Type", "value": "application/octet-stream" },
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    },
+    {
+      "source": "/(.*).js.gz",
+      "headers": [
+        { "key": "Content-Type", "value": "application/javascript" },
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    },
+    {
+      "source": "/(.*).symbols.json.gz",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    }
+  ]
+}
