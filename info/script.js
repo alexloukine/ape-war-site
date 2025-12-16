@@ -399,6 +399,7 @@ function initExpandableCards() {
 
 function expandCard(card) {
     const overlay = document.getElementById('card-overlay');
+    const cardExpanded = overlay.querySelector('.card-expanded');
     const iconImg = document.getElementById('expanded-icon-img');
     const title = document.getElementById('expanded-title');
     const desc = document.getElementById('expanded-desc');
@@ -409,6 +410,10 @@ function expandCard(card) {
     const cardTitle = card.querySelector('h3');
     const cardDesc = card.querySelector('p');
     const cardStats = card.querySelector('.class-stats');
+
+    // Check if this is a vehicle or class card (has game screenshot, not SVG icon)
+    const isScreenshot = card.classList.contains('vehicle-card') || card.classList.contains('class-card');
+    cardExpanded.classList.toggle('has-screenshot', isScreenshot);
 
     if (cardIcon) iconImg.src = cardIcon.src;
     if (cardTitle) title.textContent = cardTitle.textContent;
