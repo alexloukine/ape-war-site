@@ -1375,7 +1375,7 @@ body {
     width: 42px;
     height: 42px;
     fill: #fff;
-    margin-left: 5px;
+    margin-left: 2px;
 }
 
 .trailer-label {
@@ -1401,7 +1401,7 @@ body {
     .trailer-play-btn svg {
         width: 30px;
         height: 30px;
-        margin-left: 4px;
+        margin-left: 2px;
     }
 
     .trailer-label {
