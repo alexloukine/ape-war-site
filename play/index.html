@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>APE WAR</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Chakra Petch font (military style) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Critical CSS inline for instant visual feedback -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000000;
+            font-family: 'Chakra Petch', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        #unity-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Loading Screen - Shows immediately before JS loads */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0d0d0d 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.8s ease-out, visibility 0.8s;
+        }
+
+        #loading-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(249, 115, 22, 0.2);
+            border-radius: 50%;
+            animation: float-up 8s infinite linear;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Logo/icon container animation */
+        .logo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: logo-float 3s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.5));
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Fallback icon when no logo.png exists */
+        .logo-fallback {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.5));
+        }
+
+        @keyframes logo-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Glow ring around logo */
+        .glow-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140px;
+            height: 140px;
+            margin-left: -70px;
+            margin-top: -70px;
+            border: 2px solid rgba(249, 115, 22, 0.3);
+            border-radius: 50%;
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        .glow-ring:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .glow-ring:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .game-title {
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(249, 115, 22, 0.4), 0 0 60px rgba(249, 115, 22, 0.2);
+            margin-bottom: 50px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .loading-container {
+            width: 350px;
+            max-width: 85%;
+        }
+
+        /* Loading bar */
+        .loading-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #f97316, #fbbf24, #ea580c);
+            background-size: 200% 100%;
+            border-radius: 6px;
+            transition: width 0.3s ease-out;
+            animation: gradient-shift 2s infinite linear;
+            position: relative;
+        }
+
+        .loading-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer-pass 1.5s infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes shimmer-pass {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(350px); }
+        }
+
+        /* Indeterminate animation for initialization phase */
+        .loading-bar-fill.indeterminate {
+            width: 30% !important;
+            animation: indeterminate-slide 1.5s infinite ease-in-out;
+        }
+
+        @keyframes indeterminate-slide {
+            0% { margin-left: 0%; }
+            50% { margin-left: 70%; }
+            100% { margin-left: 0%; }
+        }
+
+        .loading-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .loading-percent {
+            font-size: 28px;
+            color: #fff;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .loading-size {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 25px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        /* Tips section */
+        .tips-container {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(249, 115, 22, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(249, 115, 22, 0.1);
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .tip-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(249, 115, 22, 0.6);
+            margin-bottom: 10px;
+        }
+
+        .tip-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+            min-height: 42px;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Initialization spinner */
+        .init-spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #f97316;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .init-spinner.visible {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #unity-warning {
+            position: absolute;
+            left: 50%;
+            top: 5%;
+            transform: translateX(-50%);
+            background: rgba(200, 50, 50, 0.9);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            display: none;
+            z-index: 200;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Fullscreen button */
+        #fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(249, 115, 22, 0.2);
+            border: 1px solid rgba(249, 115, 22, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 150;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #fullscreen-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #fullscreen-btn:hover {
+            background: rgba(249, 115, 22, 0.4);
+            transform: scale(1.1);
+        }
+
+        #fullscreen-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+        }
+
+        /* Info button */
+        #info-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 74px;
+            width: 44px;
+            height: 44px;
+            background: rgba(249, 115, 22, 0.2);
+            border: 1px solid rgba(249, 115, 22, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 150;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            pointer-events: none;
+            text-decoration: none;
+        }
+
+        #info-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #info-btn:hover {
+            background: rgba(249, 115, 22, 0.4);
+            transform: scale(1.1);
+        }
+
+        #info-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            .logo-container {
+                width: 80px;
+                height: 80px;
+            }
+            .logo-fallback {
+                font-size: 32px;
+            }
+            .tips-container {
+                margin: 30px 15px 0;
+                padding: 15px;
+            }
+            .loading-percent {
+                font-size: 22px;
+            }
+            #fullscreen-btn, #info-btn {
+                bottom: 10px;
+                width: 36px;
+                height: 36px;
+            }
+            #fullscreen-btn {
+                right: 10px;
+            }
+            #info-btn {
+                right: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading screen renders immediately, no JS required -->
+    <div id="loading-screen">
+        <!-- Animated background particles -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Animated logo/icon -->
+        <div class="logo-container">
+            <div class="glow-ring"></div>
+            <div class="glow-ring"></div>
+            <div class="glow-ring"></div>
+            <div class="logo-icon">
+                <!-- Try to load logo.png, fallback to text if not found -->
+                <img src="../Chimp War/logo.png" alt="APE WAR" onerror="this.parentElement.innerHTML='<div class=\'logo-fallback\'>AW</div>'">
+            </div>
+        </div>
+
+        <div class="game-title">APE WAR</div>
+
+        <div class="loading-container">
+            <div class="loading-bar-bg">
+                <div class="loading-bar-fill" id="loading-bar"></div>
+            </div>
+
+            <div class="loading-stats">
+                <div class="loading-percent" id="loading-percent">0%</div>
+                <div class="loading-size" id="loading-size"></div>
+            </div>
+
+            <div class="init-spinner" id="init-spinner"></div>
+            <div class="loading-text" id="loading-text">Connecting to server...</div>
+        </div>
+
+        <!-- Controls display during loading -->
+        <div class="tips-container">
+            <div class="tip-label">CONTROLS</div>
+            <div class="tip-text" id="tip-text">WASD - Move</div>
+        </div>
+    </div>
+
+    <div id="unity-container">
+        <canvas id="unity-canvas" tabindex="0"></canvas>
+    </div>
+
+    <div id="unity-warning"></div>
+
+    <!-- Info button (hidden during loading) -->
+    <a href="/" id="info-btn" title="Game Info">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+    </a>
+
+    <!-- Fullscreen button (hidden during loading) -->
+    <button id="fullscreen-btn" title="Toggle Fullscreen">
+        <svg viewBox="0 0 24 24" id="fullscreen-icon">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+        </svg>
+    </button>
+
+    <script>
+        // Generate floating particles
+        (function() {
+            var particlesContainer = document.getElementById('particles');
+            for (var i = 0; i < 20; i++) {
+                var particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        })();
+
+        // Controls rotation - cycle through individual controls
+        var tips = [
+            "WASD - Move",
+            "Space - Jump",
+            "Shift - Sprint",
+            "C - Crouch",
+            "Mouse - Aim",
+            "LMB - Fire",
+            "RMB - Aim Down Sights",
+            "R - Reload",
+            "G - Grenade",
+            "1-4 - Switch Weapons",
+            "Tab - Scoreboard",
+            "ESC - Pause Menu"
+        ];
+        var currentTip = 0;
+        var tipElement = document.getElementById('tip-text');
+
+        function rotateTip() {
+            tipElement.style.opacity = '0';
+            setTimeout(function() {
+                currentTip = (currentTip + 1) % tips.length;
+                tipElement.textContent = tips[currentTip];
+                tipElement.style.opacity = '1';
+            }, 300);
+        }
+        setInterval(rotateTip, 4000);
+    </script>
+
+    <script>
+        // Global Unity instance reference
+        var unityInstance = null;
+
+        // Fullscreen handling
+        var fullscreenBtn = document.getElementById('fullscreen-btn');
+        var fullscreenIcon = document.getElementById('fullscreen-icon');
+        var infoBtn = document.getElementById('info-btn');
+
+        function isFullscreen() {
+            return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+        }
+
+        function updateFullscreenIcon() {
+            if (isFullscreen()) {
+                // Exit fullscreen icon
+                fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+            } else {
+                // Enter fullscreen icon
+                fullscreenIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+            }
+        }
+
+        function toggleFullscreen() {
+            var elem = document.documentElement;
+            if (!isFullscreen()) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        document.addEventListener('fullscreenchange', updateFullscreenIcon);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+    </script>
+
+    <script>
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingScreen = document.querySelector("#loading-screen");
+        var loadingBar = document.querySelector("#loading-bar");
+        var loadingPercent = document.querySelector("#loading-percent");
+        var loadingText = document.querySelector("#loading-text");
+        var loadingSize = document.querySelector("#loading-size");
+        var initSpinner = document.querySelector("#init-spinner");
+        var warningBanner = document.querySelector("#unity-warning");
+
+        loadingText.textContent = "Connecting to server...";
+
+        // Fix canvas sizing for fullscreen
+        function resizeCanvas() {
+            canvas.style.width = window.innerWidth + "px";
+            canvas.style.height = window.innerHeight + "px";
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        // WASD Input Bridge for Chrome WebGL fix
+        // Chrome has issues with Unity's WebGL input handling for certain keys
+        // This tracks key states directly in JavaScript and exposes them to Unity
+        window.wasdKeyStates = { w: false, a: false, s: false, d: false };
+
+        document.addEventListener('keydown', function(e) {
+            var key = e.key.toLowerCase();
+            if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
+                window.wasdKeyStates[key] = true;
+            }
+            // Prevent browser shortcuts from intercepting game keys
+            if (["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
+                e.preventDefault();
+            }
+        }, true);
+
+        document.addEventListener('keyup', function(e) {
+            var key = e.key.toLowerCase();
+            if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
+                window.wasdKeyStates[key] = false;
+            }
+        }, true);
+
+        // Reset WASD states when window loses focus (prevents stuck keys)
+        window.addEventListener('blur', function() {
+            window.wasdKeyStates.w = false;
+            window.wasdKeyStates.a = false;
+            window.wasdKeyStates.s = false;
+            window.wasdKeyStates.d = false;
+        });
+
+        // Expose WASD states to Unity via jslib (legacy fallback)
+        window.getWASDState = function() {
+            return JSON.stringify(window.wasdKeyStates);
+        };
+
+        // Enhanced focus handling for Chrome and other browsers
+        function focusCanvas() {
+            canvas.focus();
+        }
+
+        // Multiple event listeners to ensure focus is captured
+        document.body.addEventListener("click", focusCanvas);
+        document.body.addEventListener("mousedown", focusCanvas);
+        document.body.addEventListener("pointerdown", focusCanvas);
+
+        // Re-focus when returning to tab/window
+        window.addEventListener("focus", focusCanvas);
+
+        // Focus after any visibility change (tab switching)
+        document.addEventListener("visibilitychange", function() {
+            if (!document.hidden) {
+                setTimeout(focusCanvas, 100);
+            }
+        });
+
+        function unityShowBanner(msg, type) {
+            warningBanner.style.display = "block";
+            warningBanner.innerText = msg;
+            setTimeout(function() {
+                warningBanner.style.display = "none";
+            }, 5000);
+        }
+
+        var buildUrl = "../Chimp War/Build";
+        var loaderUrl = buildUrl + "/Chimp War.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/Chimp War.data",
+            frameworkUrl: buildUrl + "/Chimp War.framework.js",
+            codeUrl: buildUrl + "/Chimp War.wasm",
+            symbolsUrl: buildUrl + "/Chimp War.symbols.json",
+            streamingAssetsUrl: "../Chimp War/StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "APE WAR",
+            productVersion: "0.1",
+            showBanner: unityShowBanner,
+            matchWebGLToCanvasSize: true,
+            devicePixelRatio: window.devicePixelRatio || 1,
+        };
+
+        // Loading phase messages
+        var loadingMessages = [
+            { threshold: 0.0, text: "Downloading game files..." },
+            { threshold: 0.2, text: "Loading weapons and vehicles..." },
+            { threshold: 0.4, text: "Preparing textures..." },
+            { threshold: 0.6, text: "Setting up physics..." },
+            { threshold: 0.8, text: "Deploying soldiers..." },
+            { threshold: 0.95, text: "Almost ready..." }
+        ];
+
+        function getLoadingMessage(progress) {
+            for (var i = loadingMessages.length - 1; i >= 0; i--) {
+                if (progress >= loadingMessages[i].threshold) {
+                    return loadingMessages[i].text;
+                }
+            }
+            return loadingMessages[0].text;
+        }
+
+        // Format bytes to human readable
+        function formatBytes(bytes) {
+            if (bytes === 0) return '';
+            var k = 1024;
+            var sizes = ['B', 'KB', 'MB', 'GB'];
+            var i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        var downloadStartTime = Date.now();
+        var lastProgress = 0;
+
+        loadingText.textContent = "Loading game engine...";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = function() {
+            createUnityInstance(canvas, config, function(progress) {
+                var percent = Math.round(progress * 100);
+                loadingBar.style.width = percent + "%";
+                loadingPercent.innerText = percent + "%";
+                loadingText.innerText = getLoadingMessage(progress);
+
+                // Estimate download time
+                if (progress > lastProgress && progress < 1) {
+                    var elapsed = (Date.now() - downloadStartTime) / 1000;
+                    var rate = progress / elapsed;
+                    var remaining = (1 - progress) / rate;
+                    if (remaining > 0 && remaining < 300) {
+                        loadingSize.textContent = "~" + Math.ceil(remaining) + "s remaining";
+                    }
+                }
+                lastProgress = progress;
+
+            }).then(function(instance) {
+                // Unity instance created - now entering initialization phase
+                unityInstance = instance;
+                window.unityInstance = instance;
+
+                loadingBar.style.width = "100%";
+                loadingPercent.innerText = "100%";
+                loadingText.innerText = "Initializing game...";
+                loadingSize.textContent = "";
+
+                // Show initialization spinner for the grey screen phase
+                initSpinner.classList.add('visible');
+                loadingBar.classList.add('indeterminate');
+
+                // Poll for game readiness (Unity often needs extra time after "100%")
+                var initCheckCount = 0;
+                var maxInitChecks = 100; // Max 10 seconds
+
+                function checkGameReady() {
+                    initCheckCount++;
+
+                    // Check if canvas has been drawn to (simple heuristic)
+                    var ctx = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                    var gameStarted = ctx && initCheckCount > 5; // Give at least 500ms
+
+                    if (gameStarted || initCheckCount >= maxInitChecks) {
+                        // Prevent clicks during fade-out from causing issues
+                        loadingScreen.style.pointerEvents = 'none';
+
+                        // Fade out loading screen
+                        loadingScreen.classList.add('fade-out');
+
+                        // Show fullscreen and info buttons
+                        fullscreenBtn.classList.add('visible');
+                        infoBtn.classList.add('visible');
+
+                        // Focus canvas after a brief delay
+                        setTimeout(function() {
+                            canvas.focus();
+                            resizeCanvas();
+                        }, 100);
+                    } else {
+                        setTimeout(checkGameReady, 100);
+                    }
+                }
+
+                // Start checking after a brief delay
+                setTimeout(checkGameReady, 500);
+
+            }).catch(function(message) {
+                loadingText.innerText = "Error loading game";
+                initSpinner.classList.remove('visible');
+                console.error(message);
+                alert(message);
+            });
+        };
+
+        document.body.appendChild(script);
+    </script>
+</body>
+</html>

@@ -1,821 +1,697 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>APE WAR</title>
-
-    <!-- Chakra Petch font (military style) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ape War - Ultimate Chaos Warfare | apewar.io</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- Critical CSS inline for instant visual feedback -->
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000000;
-            font-family: 'Chakra Petch', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        #unity-container {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-        }
-
-        #unity-canvas {
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        /* Loading Screen - Shows immediately before JS loads */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0d0d0d 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 1;
-            transition: opacity 0.8s ease-out, visibility 0.8s;
-        }
-
-        #loading-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        /* Animated background particles */
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(249, 115, 22, 0.2);
-            border-radius: 50%;
-            animation: float-up 8s infinite linear;
-        }
-
-        @keyframes float-up {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) scale(1);
-                opacity: 0;
-            }
-        }
-
-        /* Logo/icon container animation */
-        .logo-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 40px;
-        }
-
-        .logo-icon {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            animation: logo-float 3s ease-in-out infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .logo-icon img {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.5));
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Fallback icon when no logo.png exists */
-        .logo-fallback {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 48px;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.5));
-        }
-
-        @keyframes logo-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* Glow ring around logo */
-        .glow-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 140px;
-            height: 140px;
-            margin-left: -70px;
-            margin-top: -70px;
-            border: 2px solid rgba(249, 115, 22, 0.3);
-            border-radius: 50%;
-            animation: pulse-ring 2s ease-out infinite;
-        }
-
-        .glow-ring:nth-child(2) {
-            animation-delay: 0.5s;
-        }
-
-        .glow-ring:nth-child(3) {
-            animation-delay: 1s;
-        }
-
-        @keyframes pulse-ring {
-            0% {
-                transform: scale(0.8);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1.5);
-                opacity: 0;
-            }
-        }
-
-        .game-title {
-            font-size: clamp(28px, 5vw, 48px);
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 0 30px rgba(249, 115, 22, 0.4), 0 0 60px rgba(249, 115, 22, 0.2);
-            margin-bottom: 50px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .loading-container {
-            width: 350px;
-            max-width: 85%;
-        }
-
-        /* Loading bar */
-        .loading-bar-bg {
-            width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .loading-bar-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #f97316, #fbbf24, #ea580c);
-            background-size: 200% 100%;
-            border-radius: 6px;
-            transition: width 0.3s ease-out;
-            animation: gradient-shift 2s infinite linear;
-            position: relative;
-        }
-
-        .loading-bar-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer-pass 1.5s infinite;
-        }
-
-        @keyframes gradient-shift {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        @keyframes shimmer-pass {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(350px); }
-        }
-
-        /* Indeterminate animation for initialization phase */
-        .loading-bar-fill.indeterminate {
-            width: 30% !important;
-            animation: indeterminate-slide 1.5s infinite ease-in-out;
-        }
-
-        @keyframes indeterminate-slide {
-            0% { margin-left: 0%; }
-            50% { margin-left: 70%; }
-            100% { margin-left: 0%; }
-        }
-
-        .loading-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .loading-percent {
-            font-size: 28px;
-            color: #fff;
-            font-weight: 300;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .loading-size {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .loading-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 25px;
-            text-align: center;
-            min-height: 20px;
-        }
-
-        /* Tips section */
-        .tips-container {
-            margin-top: 50px;
-            padding: 20px;
-            background: rgba(249, 115, 22, 0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(249, 115, 22, 0.1);
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .tip-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: rgba(249, 115, 22, 0.6);
-            margin-bottom: 10px;
-        }
-
-        .tip-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.5;
-            min-height: 42px;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Initialization spinner */
-        .init-spinner {
-            display: none;
-            width: 24px;
-            height: 24px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #f97316;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        .init-spinner.visible {
-            display: block;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        #unity-warning {
-            position: absolute;
-            left: 50%;
-            top: 5%;
-            transform: translateX(-50%);
-            background: rgba(200, 50, 50, 0.9);
-            padding: 12px 24px;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            display: none;
-            z-index: 200;
-            backdrop-filter: blur(10px);
-        }
-
-        /* Fullscreen button */
-        #fullscreen-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
-            background: rgba(249, 115, 22, 0.2);
-            border: 1px solid rgba(249, 115, 22, 0.4);
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 150;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s ease;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #fullscreen-btn.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #fullscreen-btn:hover {
-            background: rgba(249, 115, 22, 0.4);
-            transform: scale(1.1);
-        }
-
-        #fullscreen-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
-        }
-
-        /* Info button */
-        #info-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 74px;
-            width: 44px;
-            height: 44px;
-            background: rgba(249, 115, 22, 0.2);
-            border: 1px solid rgba(249, 115, 22, 0.4);
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 150;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s ease;
-            opacity: 0;
-            pointer-events: none;
-            text-decoration: none;
-        }
-
-        #info-btn.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #info-btn:hover {
-            background: rgba(249, 115, 22, 0.4);
-            transform: scale(1.1);
-        }
-
-        #info-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
-        }
-
-        /* Mobile optimizations */
-        @media (max-width: 480px) {
-            .logo-container {
-                width: 80px;
-                height: 80px;
-            }
-            .logo-fallback {
-                font-size: 32px;
-            }
-            .tips-container {
-                margin: 30px 15px 0;
-                padding: 15px;
-            }
-            .loading-percent {
-                font-size: 22px;
-            }
-            #fullscreen-btn, #info-btn {
-                bottom: 10px;
-                width: 36px;
-                height: 36px;
-            }
-            #fullscreen-btn {
-                right: 10px;
-            }
-            #info-btn {
-                right: 56px;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Loading screen renders immediately, no JS required -->
-    <div id="loading-screen">
-        <!-- Animated background particles -->
-        <div class="particles" id="particles"></div>
-
-        <!-- Animated logo/icon -->
-        <div class="logo-container">
-            <div class="glow-ring"></div>
-            <div class="glow-ring"></div>
-            <div class="glow-ring"></div>
-            <div class="logo-icon">
-                <!-- Try to load logo.png, fallback to text if not found -->
-                <img src="Chimp War/logo.png" alt="APE WAR" onerror="this.parentElement.innerHTML='<div class=\'logo-fallback\'>AW</div>'">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <span class="logo-text">ape<span class="accent">war</span><span class="logo-io">.io</span></span>
+            <div class="nav-ca" onclick="copyCA()" title="Click to copy">
+                <span class="ca-value-nav" id="ca-nav">TBA</span>
+                <svg class="copy-icon-nav" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
             </div>
         </div>
-
-        <div class="game-title">APE WAR</div>
-
-        <div class="loading-container">
-            <div class="loading-bar-bg">
-                <div class="loading-bar-fill" id="loading-bar"></div>
-            </div>
-
-            <div class="loading-stats">
-                <div class="loading-percent" id="loading-percent">0%</div>
-                <div class="loading-size" id="loading-size"></div>
-            </div>
-
-            <div class="init-spinner" id="init-spinner"></div>
-            <div class="loading-text" id="loading-text">Connecting to server...</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#gameplay">Gameplay</a>
+            <a href="#maps">Maps</a>
+            <a href="#tokenomics">Tokenomics</a>
         </div>
+        <div class="nav-right">
+            <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+            </button>
+            <a href="/play" class="nav-cta">PLAY NOW</a>
+        </div>
+    </nav>
 
-        <!-- Controls display during loading -->
-        <div class="tips-container">
-            <div class="tip-label">CONTROLS</div>
-            <div class="tip-text" id="tip-text">WASD - Move</div>
+    <!-- Hero Section with Full Screen Video -->
+    <section id="hero" class="hero-section">
+        <div class="video-container">
+            <div class="video-placeholder" id="video-placeholder"></div>
+            <video autoplay muted loop playsinline id="hero-video" class="lazy-video">
+                <source data-src="assets/videos/hero-video.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-line">APE</span>
+                <span class="title-line accent">WAR</span>
+            </h1>
+            <p class="hero-tagline">CHAOS. DESTRUCTION. DOMINATION.</p>
+
+            <!-- Contract Address in Hero -->
+            <div class="hero-ca" onclick="copyCA()">
+                <span class="hero-ca-label">CONTRACT ADDRESS</span>
+                <div class="hero-ca-value">
+                    <span id="ca-hero">TBA</span>
+                    <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="hero-buttons">
+                <a href="/play" class="btn btn-primary pulse">
+                    <span class="btn-icon">&#9658;</span>
+                    PLAY NOW
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    LEARN MORE
+                </a>
+            </div>
+            <div class="platform-badges">
+                <div class="badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    WEB (BETA)
+                </div>
+                <div class="badge badge-coming-soon">
+                    <!-- Steam Logo SVG -->
+                    <svg viewBox="0 0 256 259" fill="currentColor">
+                        <path d="M127.779 0C60.224 0 5.171 50.71.323 115.155l68.656 28.377c5.932-4.044 13.095-6.424 20.79-6.424.676 0 1.343.02 2.01.05l31.103-45.089v-.632c0-25.485 20.757-46.24 46.253-46.24 25.502 0 46.261 20.755 46.261 46.267 0 25.5-20.76 46.247-46.26 46.247-.678 0-1.347-.026-2.016-.053l-44.4 31.662c.02.58.037 1.158.037 1.742 0 19.128-15.56 34.685-34.7 34.685-16.964 0-31.109-12.227-34.084-28.339L4.12 154.024C18.166 214.761 66.67 259 127.779 259c70.7 0 128.001-57.305 128.001-127.992C255.78 57.303 198.479 0 127.779 0"/>
+                        <path d="M80.232 200.674l-15.586-6.444c2.766 5.735 7.441 10.606 13.622 13.37 13.39 5.989 29.051-.186 35.042-13.576 2.905-6.495 2.929-13.662.06-20.18-2.87-6.519-8.204-11.593-15.015-14.404-6.76-2.782-13.91-2.622-20.159-.31l16.108 6.658c9.877 4.077 14.574 15.396 10.498 25.272-4.076 9.872-15.398 14.578-25.277 10.5l.707.114Z"/>
+                        <path d="M215.394 91.418c0-17.003-13.834-30.836-30.85-30.836-17.017 0-30.852 13.833-30.852 30.836 0 17.007 13.835 30.84 30.851 30.84 17.017 0 30.851-13.833 30.851-30.84m-53.991.009c0-12.781 10.377-23.161 23.167-23.161 12.786 0 23.168 10.38 23.168 23.16 0 12.787-10.382 23.17-23.168 23.17-12.79 0-23.167-10.383-23.167-23.17"/>
+                    </svg>
+                    STEAM <span class="coming-soon-text">COMING SOON</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>SCROLL</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section features-section">
+        <div class="container">
+            <h2 class="section-title">CORE <span class="accent">FEATURES</span></h2>
+            <p class="section-subtitle justified">Developed over the course of 12 months by an expert with a <strong class="text-white">decade</strong> of industry experience and a viral FPS game on Steam with <strong class="text-white">1M downloads</strong>.</p>
+            <p class="section-subtitle justified">The <strong class="text-white">FIRST</strong> ever <a href="https://www.ea.com/games/battlefield" target="_blank" class="inline-link">Battlefield</a>-like game that can be played <strong class="text-white">100% in the web browser</strong>. Full large scale multiplayer with unique movement shooter elements, crazy guns and an ability system inspired by popular games like <a href="https://playvalorant.com" target="_blank" class="inline-link">Valorant</a>.</p>
+            <p class="section-subtitle justified">Ape War is a <strong class="text-white">one of a kind</strong> web FPS game with proximity chat and that rewards players for winning. Ape War will set the new <strong class="text-white">industry standard for what web games can be</strong>.</p>
+
+            <!-- Trailer Video -->
+            <div class="trailer-container">
+                <div class="trailer-wrapper" id="trailer-wrapper">
+                    <div class="trailer-inner">
+                        <video
+                            id="trailer-video"
+                            class="trailer-video"
+                            playsinline
+                            preload="metadata"
+                            poster=""
+                        >
+                            <source data-src="assets/videos/trailer-compressed.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="trailer-play-overlay" id="trailer-play-overlay">
+                            <button class="trailer-play-btn" onclick="playTrailer()">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                            <span class="trailer-label">WATCH TRAILER</span>
+                        </div>
+                        <!-- Custom Video Controls -->
+                        <div class="video-controls" id="video-controls">
+                            <div class="progress-container" id="progress-container">
+                                <div class="progress-buffered" id="progress-buffered"></div>
+                                <div class="progress-bar" id="progress-bar"></div>
+                            </div>
+                            <div class="controls-row">
+                                <div class="controls-left">
+                                    <button class="control-btn play-pause" id="play-pause-btn" title="Play/Pause">
+                                        <svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        <svg id="pause-icon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                    </button>
+                                    <div class="volume-container">
+                                        <button class="control-btn volume-btn" id="volume-btn" title="Mute/Unmute">
+                                            <svg id="volume-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                                            <svg id="mute-icon" viewBox="0 0 24 24" style="display:none;"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                                        </button>
+                                        <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.1" value="1">
+                                    </div>
+                                    <div class="time-display">
+                                        <span class="current-time" id="current-time">0:00</span>
+                                        <span class="duration"> / <span id="duration">0:00</span></span>
+                                    </div>
+                                </div>
+                                <div class="controls-right">
+                                    <button class="control-btn fullscreen-btn" id="fullscreen-btn" title="Fullscreen">
+                                        <svg id="fullscreen-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                                        <svg id="exit-fullscreen-icon" viewBox="0 0 24 24" style="display:none;"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">
+                        <img src="assets/images/icons/users.svg" alt="Multiplayer">
+                    </div>
+                    <h3>FULL MULTIPLAYER</h3>
+                    <p>Battle against players worldwide in intense real-time combat. No bots, just pure competitive chaos.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <img src="assets/images/icons/destruction.svg" alt="Destruction">
+                    </div>
+                    <h3>TOTAL DESTRUCTION</h3>
+                    <p>Every wall, building, and structure can be destroyed. Shape the battlefield to your advantage.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <img src="assets/images/icons/tank.svg" alt="Vehicles">
+                    </div>
+                    <h3>VEHICLES</h3>
+                    <p>Tanks, helicopters, boats, quadbikes, and the legendary Lada. Dominate land, sea, and air.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <img src="assets/images/icons/mic.png" alt="Proximity Chat">
+                    </div>
+                    <h3>PROXIMITY CHAT</h3>
+                    <p>Hear nearby players. Coordinate with allies, trash talk enemies, or make unexpected alliances.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon">
+                        <img src="assets/images/icons/shield.png" alt="No Pay to Win">
+                    </div>
+                    <h3>NO PAY TO WIN</h3>
+                    <p>Skill wins games, not wallets. Cosmetics only. Fair play for everyone, always.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-icon">
+                        <img src="assets/images/icons/globe.svg" alt="Cross-Platform">
+                    </div>
+                    <h3>CROSS-PLATFORM</h3>
+                    <p>Play on Web or Steam. Same servers, same chaos. Your progress syncs everywhere.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proximity Chat Section -->
+    <section class="section proximity-section">
+        <div class="container">
+            <h2 class="section-title">PROXIMITY <span class="accent">CHAT</span></h2>
+            <p class="section-subtitle">Hear nearby players. Coordinate with allies, trash talk enemies, or make unexpected alliances.</p>
+
+            <div class="proximity-video-container">
+                <div class="proximity-video-wrapper">
+                    <video
+                        id="proximity-video"
+                        class="proximity-video"
+                        loop
+                        muted
+                        playsinline
+                        autoplay
+                    >
+                        <source src="assets/videos/proximity-chat.mp4" type="video/mp4">
+                    </video>
+                    <button class="unmute-btn" id="unmute-btn" title="Click to unmute">
+                        <svg class="muted-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                        </svg>
+                        <svg class="unmuted-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                        <span class="unmute-text">CLICK TO UNMUTE</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gameplay Section -->
+    <section id="gameplay" class="section gameplay-section">
+        <div class="container">
+            <h2 class="section-title">GAME <span class="accent">MODES</span></h2>
+            <div class="modes-container">
+                <div class="mode-card">
+                    <div class="mode-icon ffa">
+                        <img src="assets/images/icons/skull.svg" alt="Free For All">
+                    </div>
+                    <h3>FREE FOR ALL</h3>
+                    <p>Every ape for themselves. Last one standing wins. Pure mayhem.</p>
+                </div>
+                <div class="mode-card">
+                    <div class="mode-icon tdm">
+                        <img src="assets/images/icons/swords.svg" alt="Team Deathmatch">
+                    </div>
+                    <h3>TEAM DEATHMATCH</h3>
+                    <p>Squad up and dominate. Coordinate destruction and eliminate the enemy team.</p>
+                </div>
+                <div class="mode-card">
+                    <div class="mode-icon ctf">
+                        <img src="assets/images/icons/flag.svg" alt="Capture The Flag">
+                    </div>
+                    <h3>CAPTURE THE FLAG</h3>
+                    <p>Strategic warfare. Defend your base, raid theirs. Teamwork is essential.</p>
+                </div>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 80px;">CHOOSE YOUR <span class="accent">CLASS</span></h2>
+            <div class="classes-grid">
+                <div class="class-card">
+                    <div class="class-icon assault">
+                        <img src="assets/images/icons/rifle.svg" alt="Assault">
+                    </div>
+                    <h3>ASSAULT</h3>
+                    <p>High damage output with assault rifles and grenades. Lead the charge.</p>
+                    <div class="class-stats">
+                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 85%"></div></div></div>
+                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 70%"></div></div></div>
+                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 60%"></div></div></div>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <div class="class-icon engineer">
+                        <img src="assets/images/icons/wrench.svg" alt="Engineer">
+                    </div>
+                    <h3>ENGINEER</h3>
+                    <p>Build defenses and deploy turrets. Control the battlefield with technology.</p>
+                    <div class="class-stats">
+                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 60%"></div></div></div>
+                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 55%"></div></div></div>
+                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 90%"></div></div></div>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <div class="class-icon recon">
+                        <img src="assets/images/icons/crosshair.svg" alt="Recon">
+                    </div>
+                    <h3>RECON</h3>
+                    <p>Sniper specialist with stealth abilities. Strike from the shadows.</p>
+                    <div class="class-stats">
+                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 95%"></div></div></div>
+                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 80%"></div></div></div>
+                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 40%"></div></div></div>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <div class="class-icon medic">
+                        <img src="assets/images/icons/plus.svg" alt="Medic">
+                    </div>
+                    <h3>MEDIC</h3>
+                    <p>Keep your team alive with healing abilities and support gear.</p>
+                    <div class="class-stats">
+                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 50%"></div></div></div>
+                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 65%"></div></div></div>
+                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 75%"></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 80px;">MOVEMENT <span class="accent">SYSTEM</span></h2>
+            <div class="movement-showcase">
+                <div class="movement-item">
+                    <div class="movement-icon rocket">
+                        <img src="assets/images/icons/rocket.png" alt="Rocket Jump">
+                    </div>
+                    <h4>ROCKET JUMP</h4>
+                    <p>Blast yourself skyward for tactical positioning</p>
+                </div>
+                <div class="movement-item">
+                    <div class="movement-icon double-jump">
+                        <img src="assets/images/icons/boots.svg" alt="Double Jump">
+                    </div>
+                    <h4>DOUBLE JUMP</h4>
+                    <p>Enhanced mobility for dodging and traversal</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vehicles Section -->
+    <section id="vehicles" class="section vehicles-section">
+        <div class="container">
+            <h2 class="section-title">DOMINATE WITH <span class="accent">VEHICLES</span></h2>
+            <div class="vehicles-grid">
+                <div class="vehicle-card">
+                    <div class="vehicle-icon tank">
+                        <img src="assets/images/icons/tank.svg" alt="Tank">
+                    </div>
+                    <h3>TANK</h3>
+                    <p>Heavy armor, devastating firepower</p>
+                </div>
+                <div class="vehicle-card">
+                    <div class="vehicle-icon helicopter">
+                        <img src="assets/images/icons/helicopter.svg" alt="Helicopter">
+                    </div>
+                    <h3>HELICOPTER</h3>
+                    <p>Air superiority and rapid deployment</p>
+                </div>
+                <div class="vehicle-card">
+                    <div class="vehicle-icon boat">
+                        <img src="assets/images/icons/boat.svg" alt="Boat">
+                    </div>
+                    <h3>BOAT</h3>
+                    <p>Naval dominance and coastal raids</p>
+                </div>
+                <div class="vehicle-card">
+                    <div class="vehicle-icon quadbike">
+                        <img src="assets/images/icons/quad.svg" alt="Quadbike">
+                    </div>
+                    <h3>QUADBIKE</h3>
+                    <p>Fast terrain traversal</p>
+                </div>
+                <div class="vehicle-card">
+                    <div class="vehicle-icon lada">
+                        <img src="assets/images/icons/car.svg" alt="Lada">
+                    </div>
+                    <h3>LADA</h3>
+                    <p>The legendary ride. Indestructible spirit.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Maps Section -->
+    <section id="maps" class="section maps-section">
+        <div class="container">
+            <h2 class="section-title">BATTLE <span class="accent">ARENAS</span></h2>
+            <p class="section-subtitle">Fully destructible environments across diverse landscapes</p>
+            <div class="maps-grid">
+                <div class="map-card" data-map="0" onclick="openLightbox(0)">
+                    <div class="map-placeholder"></div>
+                    <img src="assets/images/maps/Archiapelago.jpg" alt="Archipelago Map" loading="lazy" class="lazy-image">
+                    <div class="map-overlay">
+                        <h3>ARCHIPELAGO</h3>
+                        <p>Island warfare with naval combat</p>
+                    </div>
+                </div>
+                <div class="map-card" data-map="1" onclick="openLightbox(1)">
+                    <div class="map-placeholder"></div>
+                    <img src="assets/images/maps/Blizzard.jpg" alt="Blizzard Map" loading="lazy" class="lazy-image">
+                    <div class="map-overlay">
+                        <h3>BLIZZARD</h3>
+                        <p>Frozen tundra with limited visibility</p>
+                    </div>
+                </div>
+                <div class="map-card" data-map="2" onclick="openLightbox(2)">
+                    <div class="map-placeholder"></div>
+                    <img src="assets/images/maps/Desert Oasis.jpg" alt="Desert Oasis Map" loading="lazy" class="lazy-image">
+                    <div class="map-overlay">
+                        <h3>DESERT OASIS</h3>
+                        <p>Scorched sands and ancient ruins</p>
+                    </div>
+                </div>
+                <div class="map-card" data-map="3" onclick="openLightbox(3)">
+                    <div class="map-placeholder"></div>
+                    <img src="assets/images/maps/Jungle.jpg" alt="Jungle Map" loading="lazy" class="lazy-image">
+                    <div class="map-overlay">
+                        <h3>JUNGLE</h3>
+                        <p>Dense foliage and hidden dangers</p>
+                    </div>
+                </div>
+                <div class="map-card coming-soon" data-map="4" onclick="openLightbox(4)">
+                    <div class="map-placeholder"></div>
+                    <img src="assets/images/maps/Pleasant Valley (Coming soon).jpg" alt="Pleasant Valley Map" loading="lazy" class="lazy-image">
+                    <div class="map-overlay">
+                        <h3>PLEASANT VALLEY</h3>
+                        <span class="coming-soon-badge">COMING SOON</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Lightbox -->
+    <div id="map-lightbox" class="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <div class="lightbox-content">
+            <img id="lightbox-image" src="" alt="">
+            <h3 id="lightbox-title" class="lightbox-title"></h3>
+            <p id="lightbox-desc" class="lightbox-desc"></p>
+        </div>
+        <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Card Expand Overlay -->
+    <div id="card-overlay" class="card-overlay">
+        <div class="card-expanded">
+            <button class="card-expanded-close" onclick="closeCardOverlay()">&times;</button>
+            <div class="expanded-icon">
+                <img id="expanded-icon-img" src="" alt="">
+            </div>
+            <h3 id="expanded-title"></h3>
+            <p id="expanded-desc"></p>
+            <div id="expanded-stats" class="expanded-stats"></div>
         </div>
     </div>
 
-    <div id="unity-container">
-        <canvas id="unity-canvas" tabindex="0"></canvas>
-    </div>
+    <!-- Tokenomics Section -->
+    <section id="tokenomics" class="section tokenomics-section">
+        <div class="container">
+            <h2 class="section-title">TOKEN<span class="accent">OMICS</span></h2>
+            <div class="token-hero">
+                <div class="token-symbol">$APE</div>
+                <p class="token-tagline">Deflationary by design. Play to earn.</p>
+            </div>
 
-    <div id="unity-warning"></div>
+            <div class="ca-box-wrapper">
+                <div class="ca-box" onclick="copyCA()">
+                    <span class="ca-label">CONTRACT ADDRESS</span>
+                    <div class="ca-value">
+                        <span id="ca-text">TBA</span>
+                        <button class="copy-btn" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Info button (hidden during loading) -->
-    <a href="/info" id="info-btn" title="Game Info">
-        <svg viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-        </svg>
-    </a>
+            <div class="tokenomics-grid">
+                <div class="token-card">
+                    <div class="token-card-icon burn">
+                        <img src="assets/images/icons/fire.svg" alt="Burn">
+                    </div>
+                    <h3>100% BURN</h3>
+                    <p>Every cosmetic purchase burns 100% of the tokens used. Maximum deflation.</p>
+                </div>
+                <div class="token-card">
+                    <div class="token-card-icon cosmetics">
+                        <img src="assets/images/icons/crown.png" alt="Cosmetics">
+                    </div>
+                    <h3>COSMETICS</h3>
+                    <p>Buy exclusive hats, capes, and gun skins with $APE. Look legendary on the battlefield.</p>
+                </div>
+                <div class="token-card">
+                    <div class="token-card-icon rewards">
+                        <img src="assets/images/icons/trophy.svg" alt="Rewards">
+                    </div>
+                    <h3>12.5% CREATOR FEES</h3>
+                    <p>Top 3 players each hour split 12.5% of all Pump.fun trading volume. Skill pays.</p>
+                </div>
+            </div>
 
-    <!-- Fullscreen button (hidden during loading) -->
-    <button id="fullscreen-btn" title="Toggle Fullscreen">
-        <svg viewBox="0 0 24 24" id="fullscreen-icon">
-            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
-        </svg>
-    </button>
+            <div class="tokenomics-flows">
+                <div class="flow-card">
+                    <div class="flow-header">
+                        <span class="flow-label">COSMETIC PURCHASES</span>
+                    </div>
+                    <div class="flow-content">
+                        <div class="flow-step">
+                            <div class="flow-icon purchase">
+                                <svg viewBox="0 0 576 512" fill="currentColor">
+                                    <path d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"/>
+                                </svg>
+                            </div>
+                            <span>Buy Hat/Cape</span>
+                        </div>
+                        <div class="flow-arrow-right"></div>
+                        <div class="flow-result burn-result">
+                            <span class="percent-big">100%</span>
+                            <div class="flow-icon fire">
+                                <svg viewBox="0 0 384 512" fill="currentColor">
+                                    <path d="M216 23.86c0-23.8-30.65-32.77-44.15-13.04C48 191.85 224 200 224 288c0 35.63-29.11 64.46-64.85 63.99-35.17-.45-63.15-29.77-63.15-64.94v-85.51c0-21.7-26.47-32.23-41.43-16.5C27.8 213.16 0 261.33 0 320c0 105.87 86.13 192 192 192s192-86.13 192-192c0-170.29-168-193-168-296.14z"/>
+                                </svg>
+                            </div>
+                            <span class="result-label">BURNED FOREVER</span>
+                        </div>
+                    </div>
+                </div>
 
-    <script>
-        // Generate floating particles
-        (function() {
-            var particlesContainer = document.getElementById('particles');
-            for (var i = 0; i < 20; i++) {
-                var particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 8 + 's';
-                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
-                particlesContainer.appendChild(particle);
-            }
-        })();
+                <div class="flow-card">
+                    <div class="flow-header">
+                        <span class="flow-label">12.5% PUMP.FUN CREATOR FEES</span>
+                    </div>
+                    <div class="flow-content">
+                        <div class="flow-step">
+                            <div class="flow-icon pump">
+                                <svg viewBox="0 0 512 512" fill="currentColor">
+                                    <path d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64V400c0 44.2 35.8 80 80 80H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H80c-8.8 0-16-7.2-16-16V64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L240 221.3l57.4 57.4c12.5 12.5 32.8 12.5 45.3 0l128-128z"/>
+                                </svg>
+                            </div>
+                            <span>Trading Volume</span>
+                        </div>
+                        <div class="flow-arrow-right"></div>
+                        <div class="flow-result reward-result">
+                            <span class="percent-big reward-percent">12.5%</span>
+                            <div class="flow-icon trophy">
+                                <svg viewBox="0 0 576 512" fill="currentColor">
+                                    <path d="M552 64H448V24c0-13.3-10.7-24-24-24H152c-13.3 0-24 10.7-24 24v40H24C10.7 64 0 74.7 0 88v56c0 66.5 77.9 131.7 171.9 142.4C203.3 338.5 240 360 240 360v72h-48c-35.3 0-64 20.7-64 56v12c0 6.6 5.4 12 12 12h296c6.6 0 12-5.4 12-12v-12c0-35.3-28.7-56-64-56h-48v-72s36.7-21.5 68.1-73.6C498.4 275.6 576 210.3 576 144V88c0-13.3-10.7-24-24-24z"/>
+                                </svg>
+                            </div>
+                            <span class="result-label">TOP 3 PLAYERS</span>
+                            <div class="reward-split">
+                                <span class="split-item">1st: 50%</span>
+                                <span class="split-item">2nd: 30%</span>
+                                <span class="split-item">3rd: 20%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // Controls rotation - cycle through individual controls
-        var tips = [
-            "WASD - Move",
-            "Space - Jump",
-            "Shift - Sprint",
-            "C - Crouch",
-            "Mouse - Aim",
-            "LMB - Fire",
-            "RMB - Aim Down Sights",
-            "R - Reload",
-            "G - Grenade",
-            "1-4 - Switch Weapons",
-            "Tab - Scoreboard",
-            "ESC - Pause Menu"
-        ];
-        var currentTip = 0;
-        var tipElement = document.getElementById('tip-text');
+    <!-- Leaderboard Section (commented out for now)
+    <section id="leaderboard" class="section leaderboard-section">
+        <div class="container">
+            <h2 class="section-title">HOURLY <span class="accent">LEADERBOARD</span></h2>
+            <p class="section-subtitle">Top 3 players each hour split the Pump.fun creator fees</p>
 
-        function rotateTip() {
-            tipElement.style.opacity = '0';
-            setTimeout(function() {
-                currentTip = (currentTip + 1) % tips.length;
-                tipElement.textContent = tips[currentTip];
-                tipElement.style.opacity = '1';
-            }, 300);
-        }
-        setInterval(rotateTip, 4000);
-    </script>
+            <div class="leaderboard-timer">
+                <span class="timer-label">NEXT PAYOUT IN</span>
+                <div class="timer-display">
+                    <div class="timer-unit">
+                        <span id="minutes">00</span>
+                        <small>MIN</small>
+                    </div>
+                    <span class="timer-separator">:</span>
+                    <div class="timer-unit">
+                        <span id="seconds">00</span>
+                        <small>SEC</small>
+                    </div>
+                </div>
+            </div>
 
-    <script>
-        // Global Unity instance reference
-        var unityInstance = null;
+            <div class="leaderboard-podium">
+                <div class="podium-place second">
+                    <div class="player-avatar">2</div>
+                    <div class="player-name">- - -</div>
+                    <div class="player-score">0 pts</div>
+                    <div class="reward-share">25%</div>
+                </div>
+                <div class="podium-place first">
+                    <div class="crown">
+                        <svg viewBox="0 0 640 512" fill="currentColor" width="40" height="40">
+                            <path d="M528 448H112c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h416c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm64-320c-26.5 0-48 21.5-48 48 0 7.1 1.6 13.7 4.4 19.8L476 239.2c-15.4 9.2-35.3 4-44.2-11.6L350.3 85C361 76.2 368 63 368 48c0-26.5-21.5-48-48-48s-48 21.5-48 48c0 15 7 28.2 17.7 37l-81.5 142.6c-8.9 15.6-28.9 20.8-44.2 11.6l-72.3-43.4c2.7-6 4.4-12.7 4.4-19.8 0-26.5-21.5-48-48-48S0 149.5 0 176s21.5 48 48 48c2.6 0 5.2-.4 7.7-.8L128 416h384l72.3-192.8c2.5.4 5.1.8 7.7.8 26.5 0 48-21.5 48-48s-21.5-48-48-48z"/>
+                        </svg>
+                    </div>
+                    <div class="player-avatar">1</div>
+                    <div class="player-name">- - -</div>
+                    <div class="player-score">0 pts</div>
+                    <div class="reward-share">50%</div>
+                </div>
+                <div class="podium-place third">
+                    <div class="player-avatar">3</div>
+                    <div class="player-name">- - -</div>
+                    <div class="player-score">0 pts</div>
+                    <div class="reward-share">25%</div>
+                </div>
+            </div>
 
-        // Fullscreen handling
-        var fullscreenBtn = document.getElementById('fullscreen-btn');
-        var fullscreenIcon = document.getElementById('fullscreen-icon');
-        var infoBtn = document.getElementById('info-btn');
+            <p class="leaderboard-note">Leaderboard activates at launch. Play to earn.</p>
+        </div>
+    </section>
+    -->
 
-        function isFullscreen() {
-            return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-        }
+    <!-- Play Section -->
+    <section id="play" class="section play-section">
+        <div class="container">
+            <h2 class="section-title">JOIN THE <span class="accent">CHAOS</span></h2>
+            <p class="section-subtitle">Available on Web & Steam</p>
+            <div class="play-buttons">
+                <a href="/play" class="play-btn web-btn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    PLAY ON WEB <span class="beta-tag">(BETA)</span>
+                </a>
+                <a href="#" class="play-btn steam-btn disabled">
+                    <svg viewBox="0 0 256 259" fill="currentColor">
+                        <path d="M127.779 0C60.224 0 5.171 50.71.323 115.155l68.656 28.377c5.932-4.044 13.095-6.424 20.79-6.424.676 0 1.343.02 2.01.05l31.103-45.089v-.632c0-25.485 20.757-46.24 46.253-46.24 25.502 0 46.261 20.755 46.261 46.267 0 25.5-20.76 46.247-46.26 46.247-.678 0-1.347-.026-2.016-.053l-44.4 31.662c.02.58.037 1.158.037 1.742 0 19.128-15.56 34.685-34.7 34.685-16.964 0-31.109-12.227-34.084-28.339L4.12 154.024C18.166 214.761 66.67 259 127.779 259c70.7 0 128.001-57.305 128.001-127.992C255.78 57.303 198.479 0 127.779 0"/>
+                        <path d="M80.232 200.674l-15.586-6.444c2.766 5.735 7.441 10.606 13.622 13.37 13.39 5.989 29.051-.186 35.042-13.576 2.905-6.495 2.929-13.662.06-20.18-2.87-6.519-8.204-11.593-15.015-14.404-6.76-2.782-13.91-2.622-20.159-.31l16.108 6.658c9.877 4.077 14.574 15.396 10.498 25.272-4.076 9.872-15.398 14.578-25.277 10.5l.707.114Z"/>
+                        <path d="M215.394 91.418c0-17.003-13.834-30.836-30.85-30.836-17.017 0-30.852 13.833-30.852 30.836 0 17.007 13.835 30.84 30.851 30.84 17.017 0 30.851-13.833 30.851-30.84m-53.991.009c0-12.781 10.377-23.161 23.167-23.161 12.786 0 23.168 10.38 23.168 23.16 0 12.787-10.382 23.17-23.168 23.17-12.79 0-23.167-10.383-23.167-23.17"/>
+                    </svg>
+                    STEAM <span class="coming-soon-tag">COMING SOON</span>
+                </a>
+            </div>
+            <div class="social-links">
+                <a href="https://x.com/apewargame" target="_blank" class="social-link" title="X (Twitter)">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+                <a href="#" target="_blank" class="social-link" title="Pump.fun">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <g transform="rotate(45 12 12)">
+                            <!-- Top half - outlined only -->
+                            <path d="M7 12V7a5 5 0 0 1 10 0v5" fill="none"/>
+                            <!-- Bottom half - filled -->
+                            <path d="M7 12v5a5 5 0 0 0 10 0v-5z" fill="currentColor"/>
+                            <!-- Dividing line -->
+                            <line x1="7" y1="12" x2="17" y2="12"/>
+                        </g>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
 
-        function updateFullscreenIcon() {
-            if (isFullscreen()) {
-                // Exit fullscreen icon
-                fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
-            } else {
-                // Enter fullscreen icon
-                fullscreenIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
-            }
-        }
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">APE<span class="accent">WAR</span></div>
+            <p class="footer-text">The ultimate multiplayer destruction game</p>
+            <p class="footer-copyright">&copy; 2026 Ape War. All rights reserved. | <a href="/" class="footer-link">apewar.io</a></p>
+        </div>
+    </footer>
 
-        function toggleFullscreen() {
-            var elem = document.documentElement;
-            if (!isFullscreen()) {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                } else if (elem.mozRequestFullScreen) {
-                    elem.mozRequestFullScreen();
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-            }
-        }
-
-        fullscreenBtn.addEventListener('click', toggleFullscreen);
-        document.addEventListener('fullscreenchange', updateFullscreenIcon);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
-        document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
-        document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
-    </script>
-
-    <script>
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingScreen = document.querySelector("#loading-screen");
-        var loadingBar = document.querySelector("#loading-bar");
-        var loadingPercent = document.querySelector("#loading-percent");
-        var loadingText = document.querySelector("#loading-text");
-        var loadingSize = document.querySelector("#loading-size");
-        var initSpinner = document.querySelector("#init-spinner");
-        var warningBanner = document.querySelector("#unity-warning");
-
-        loadingText.textContent = "Connecting to server...";
-
-        // Fix canvas sizing for fullscreen
-        function resizeCanvas() {
-            canvas.style.width = window.innerWidth + "px";
-            canvas.style.height = window.innerHeight + "px";
-        }
-
-        window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
-
-        // WASD Input Bridge for Chrome WebGL fix
-        // Chrome has issues with Unity's WebGL input handling for certain keys
-        // This tracks key states directly in JavaScript and exposes them to Unity
-        window.wasdKeyStates = { w: false, a: false, s: false, d: false };
-
-        document.addEventListener('keydown', function(e) {
-            var key = e.key.toLowerCase();
-            if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
-                window.wasdKeyStates[key] = true;
-            }
-            // Prevent browser shortcuts from intercepting game keys
-            if (["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
-                e.preventDefault();
-            }
-        }, true);
-
-        document.addEventListener('keyup', function(e) {
-            var key = e.key.toLowerCase();
-            if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
-                window.wasdKeyStates[key] = false;
-            }
-        }, true);
-
-        // Reset WASD states when window loses focus (prevents stuck keys)
-        window.addEventListener('blur', function() {
-            window.wasdKeyStates.w = false;
-            window.wasdKeyStates.a = false;
-            window.wasdKeyStates.s = false;
-            window.wasdKeyStates.d = false;
-        });
-
-        // Expose WASD states to Unity via jslib (legacy fallback)
-        window.getWASDState = function() {
-            return JSON.stringify(window.wasdKeyStates);
-        };
-
-        // Enhanced focus handling for Chrome and other browsers
-        function focusCanvas() {
-            canvas.focus();
-        }
-
-        // Multiple event listeners to ensure focus is captured
-        document.body.addEventListener("click", focusCanvas);
-        document.body.addEventListener("mousedown", focusCanvas);
-        document.body.addEventListener("pointerdown", focusCanvas);
-
-        // Re-focus when returning to tab/window
-        window.addEventListener("focus", focusCanvas);
-
-        // Focus after any visibility change (tab switching)
-        document.addEventListener("visibilitychange", function() {
-            if (!document.hidden) {
-                setTimeout(focusCanvas, 100);
-            }
-        });
-
-        function unityShowBanner(msg, type) {
-            warningBanner.style.display = "block";
-            warningBanner.innerText = msg;
-            setTimeout(function() {
-                warningBanner.style.display = "none";
-            }, 5000);
-        }
-
-        var buildUrl = "Chimp War/Build";
-        var loaderUrl = buildUrl + "/Chimp War.loader.js";
-        var config = {
-            dataUrl: buildUrl + "/Chimp War.data.gz",
-            frameworkUrl: buildUrl + "/Chimp War.framework.js.gz",
-            codeUrl: buildUrl + "/Chimp War.wasm.gz",
-            symbolsUrl: buildUrl + "/Chimp War.symbols.json.gz",
-            streamingAssetsUrl: "Chimp War/StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "APE WAR",
-            productVersion: "0.1",
-            showBanner: unityShowBanner,
-            matchWebGLToCanvasSize: true,
-            devicePixelRatio: window.devicePixelRatio || 1,
-        };
-
-        // Loading phase messages
-        var loadingMessages = [
-            { threshold: 0.0, text: "Downloading game files..." },
-            { threshold: 0.2, text: "Loading weapons and vehicles..." },
-            { threshold: 0.4, text: "Preparing textures..." },
-            { threshold: 0.6, text: "Setting up physics..." },
-            { threshold: 0.8, text: "Deploying soldiers..." },
-            { threshold: 0.95, text: "Almost ready..." }
-        ];
-
-        function getLoadingMessage(progress) {
-            for (var i = loadingMessages.length - 1; i >= 0; i--) {
-                if (progress >= loadingMessages[i].threshold) {
-                    return loadingMessages[i].text;
-                }
-            }
-            return loadingMessages[0].text;
-        }
-
-        // Format bytes to human readable
-        function formatBytes(bytes) {
-            if (bytes === 0) return '';
-            var k = 1024;
-            var sizes = ['B', 'KB', 'MB', 'GB'];
-            var i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
-        var downloadStartTime = Date.now();
-        var lastProgress = 0;
-
-        loadingText.textContent = "Loading game engine...";
-
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = function() {
-            createUnityInstance(canvas, config, function(progress) {
-                var percent = Math.round(progress * 100);
-                loadingBar.style.width = percent + "%";
-                loadingPercent.innerText = percent + "%";
-                loadingText.innerText = getLoadingMessage(progress);
-
-                // Estimate download time
-                if (progress > lastProgress && progress < 1) {
-                    var elapsed = (Date.now() - downloadStartTime) / 1000;
-                    var rate = progress / elapsed;
-                    var remaining = (1 - progress) / rate;
-                    if (remaining > 0 && remaining < 300) {
-                        loadingSize.textContent = "~" + Math.ceil(remaining) + "s remaining";
-                    }
-                }
-                lastProgress = progress;
-
-            }).then(function(instance) {
-                // Unity instance created - now entering initialization phase
-                unityInstance = instance;
-                window.unityInstance = instance;
-
-                loadingBar.style.width = "100%";
-                loadingPercent.innerText = "100%";
-                loadingText.innerText = "Initializing game...";
-                loadingSize.textContent = "";
-
-                // Show initialization spinner for the grey screen phase
-                initSpinner.classList.add('visible');
-                loadingBar.classList.add('indeterminate');
-
-                // Poll for game readiness (Unity often needs extra time after "100%")
-                var initCheckCount = 0;
-                var maxInitChecks = 100; // Max 10 seconds
-
-                function checkGameReady() {
-                    initCheckCount++;
-
-                    // Check if canvas has been drawn to (simple heuristic)
-                    var ctx = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                    var gameStarted = ctx && initCheckCount > 5; // Give at least 500ms
-
-                    if (gameStarted || initCheckCount >= maxInitChecks) {
-                        // Prevent clicks during fade-out from causing issues
-                        loadingScreen.style.pointerEvents = 'none';
-
-                        // Fade out loading screen
-                        loadingScreen.classList.add('fade-out');
-
-                        // Show fullscreen and info buttons
-                        fullscreenBtn.classList.add('visible');
-                        infoBtn.classList.add('visible');
-
-                        // Focus canvas after a brief delay
-                        setTimeout(function() {
-                            canvas.focus();
-                            resizeCanvas();
-                        }, 100);
-                    } else {
-                        setTimeout(checkGameReady, 100);
-                    }
-                }
-
-                // Start checking after a brief delay
-                setTimeout(checkGameReady, 500);
-
-            }).catch(function(message) {
-                loadingText.innerText = "Error loading game";
-                initSpinner.classList.remove('visible');
-                console.error(message);
-                alert(message);
-            });
-        };
-
-        document.body.appendChild(script);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
