@@ -6,55 +6,509 @@
 const CONTRACT_ADDRESS = 'TBA';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initPreloader();
+    initTheme();
     initNavbar();
     initScrollAnimations();
     initLeaderboardTimer();
     initSmoothScroll();
     initProgressiveLoading();
     initParallaxEffects();
+    initLightbox();
+    initExpandableCards();
+    initTrailer();
+    initProximityChat();
     updateAllCA();
+    document.body.classList.add('loaded');
 });
 
 // ========================================
-// Preloader
+// Proximity Chat Video
 // ========================================
-function initPreloader() {
-    const preloader = document.getElementById('preloader');
-    const progressBar = document.getElementById('loader-progress');
+function initProximityChat() {
+    const video = document.getElementById('proximity-video');
+    const unmuteBtn = document.getElementById('unmute-btn');
 
-    document.body.classList.add('loading');
+    if (!video || !unmuteBtn) return;
 
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 100) progress = 100;
-
-        if (progressBar) {
-            progressBar.style.width = progress + '%';
-        }
-
-        if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                hidePreloader();
-            }, 500);
-        }
-    }, 200);
-
-    // Fallback: hide preloader after max 3 seconds
-    setTimeout(() => {
-        hidePreloader();
-    }, 3000);
+    unmuteBtn.addEventListener('click', () => {
+        video.muted = !video.muted;
+        unmuteBtn.classList.toggle('unmuted', !video.muted);
+    });
 }
 
-function hidePreloader() {
-    const preloader = document.getElementById('preloader');
-    if (preloader) {
-        preloader.classList.add('hidden');
-        document.body.classList.remove('loading');
-        document.body.classList.add('loaded');
+// ========================================
+// Theme Toggle
+// ========================================
+function initTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    // Check for saved theme preference or default to dark
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            // Add transition class for smooth theme change
+            document.body.classList.add('theme-transitioning');
+            setTimeout(() => {
+                document.body.classList.remove('theme-transitioning');
+            }, 300);
+        });
     }
+}
+
+// ========================================
+// Trailer Video with Custom Controls
+// ========================================
+let trailerLoaded = false;
+
+function initTrailer() {
+    const trailer = document.getElementById('trailer-video');
+    const overlay = document.getElementById('trailer-play-overlay');
+    const wrapper = document.getElementById('trailer-wrapper');
+
+    if (!trailer) return;
+
+    // Load video when it comes into view
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !trailerLoaded) {
+                loadTrailer();
+            }
+        });
+    }, { rootMargin: '200px' });
+
+    observer.observe(trailer);
+
+    // Hide overlay when video plays
+    trailer.addEventListener('play', () => {
+        overlay.classList.add('hidden');
+        wrapper.classList.add('video-started');
+        updatePlayPauseIcon(true);
+    });
+
+    // Show overlay when video pauses/ends
+    trailer.addEventListener('pause', () => {
+        updatePlayPauseIcon(false);
+        if (trailer.currentTime === 0 || trailer.ended) {
+            overlay.classList.remove('hidden');
+        }
+    });
+
+    trailer.addEventListener('ended', () => {
+        overlay.classList.remove('hidden');
+        updatePlayPauseIcon(false);
+    });
+
+    // Initialize custom controls
+    initCustomControls();
+}
+
+function initCustomControls() {
+    const trailer = document.getElementById('trailer-video');
+    const wrapper = document.getElementById('trailer-wrapper');
+    if (!trailer) return;
+
+    // Elements
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const volumeBtn = document.getElementById('volume-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const progressBuffered = document.getElementById('progress-buffered');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+    // Play/Pause
+    playPauseBtn.addEventListener('click', togglePlay);
+    trailer.addEventListener('click', togglePlay);
+
+    // Volume
+    volumeBtn.addEventListener('click', toggleMute);
+    volumeSlider.addEventListener('input', (e) => {
+        trailer.volume = e.target.value;
+        trailer.muted = false;
+        updateVolumeIcon();
+        updateVolumeFill();
+    });
+
+    // Initialize volume fill
+    updateVolumeFill();
+
+    // Progress bar
+    trailer.addEventListener('timeupdate', updateProgress);
+    trailer.addEventListener('loadedmetadata', () => {
+        durationEl.textContent = formatTime(trailer.duration);
+    });
+    trailer.addEventListener('progress', updateBuffered);
+
+    // Seek
+    progressContainer.addEventListener('click', seek);
+    let isDragging = false;
+    progressContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        seek(e);
+    });
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) seek(e);
+    });
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    // Fullscreen
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+    // Show controls on mouse move
+    let controlsTimeout;
+    wrapper.addEventListener('mousemove', () => {
+        wrapper.classList.add('controls-visible');
+        clearTimeout(controlsTimeout);
+        controlsTimeout = setTimeout(() => {
+            if (!trailer.paused) {
+                wrapper.classList.remove('controls-visible');
+            }
+        }, 3000);
+    });
+
+    // Keyboard shortcuts
+    wrapper.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'k') {
+            e.preventDefault();
+            togglePlay();
+        } else if (e.key === 'f') {
+            toggleFullscreen();
+        } else if (e.key === 'm') {
+            toggleMute();
+        } else if (e.key === 'ArrowLeft') {
+            trailer.currentTime -= 5;
+        } else if (e.key === 'ArrowRight') {
+            trailer.currentTime += 5;
+        }
+    });
+
+    wrapper.setAttribute('tabindex', '0');
+}
+
+function togglePlay() {
+    const trailer = document.getElementById('trailer-video');
+    const overlay = document.getElementById('trailer-play-overlay');
+
+    if (!trailerLoaded) {
+        loadTrailer();
+    }
+
+    if (trailer.paused) {
+        overlay.classList.add('hidden');
+        trailer.play();
+    } else {
+        trailer.pause();
+    }
+}
+
+function updatePlayPauseIcon(isPlaying) {
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    if (playIcon && pauseIcon) {
+        playIcon.style.display = isPlaying ? 'none' : 'block';
+        pauseIcon.style.display = isPlaying ? 'block' : 'none';
+    }
+}
+
+function toggleMute() {
+    const trailer = document.getElementById('trailer-video');
+    const volumeSlider = document.getElementById('volume-slider');
+    trailer.muted = !trailer.muted;
+    if (!trailer.muted && trailer.volume === 0) {
+        trailer.volume = 0.5;
+        volumeSlider.value = 0.5;
+    }
+    updateVolumeIcon();
+    updateVolumeFill();
+}
+
+function updateVolumeFill() {
+    const trailer = document.getElementById('trailer-video');
+    const volumeSlider = document.getElementById('volume-slider');
+    const fillPercent = trailer.muted ? 0 : trailer.volume * 100;
+    volumeSlider.style.setProperty('--volume-fill', fillPercent + '%');
+}
+
+function updateVolumeIcon() {
+    const trailer = document.getElementById('trailer-video');
+    const volumeIcon = document.getElementById('volume-icon');
+    const muteIcon = document.getElementById('mute-icon');
+
+    if (trailer.muted || trailer.volume === 0) {
+        volumeIcon.style.display = 'none';
+        muteIcon.style.display = 'block';
+    } else {
+        volumeIcon.style.display = 'block';
+        muteIcon.style.display = 'none';
+    }
+}
+
+function updateProgress() {
+    const trailer = document.getElementById('trailer-video');
+    const progressBar = document.getElementById('progress-bar');
+    const currentTimeEl = document.getElementById('current-time');
+
+    if (trailer.duration) {
+        const percent = (trailer.currentTime / trailer.duration) * 100;
+        progressBar.style.width = percent + '%';
+        currentTimeEl.textContent = formatTime(trailer.currentTime);
+    }
+}
+
+function updateBuffered() {
+    const trailer = document.getElementById('trailer-video');
+    const progressBuffered = document.getElementById('progress-buffered');
+
+    if (trailer.buffered.length > 0 && trailer.duration) {
+        const bufferedEnd = trailer.buffered.end(trailer.buffered.length - 1);
+        const percent = (bufferedEnd / trailer.duration) * 100;
+        progressBuffered.style.width = percent + '%';
+    }
+}
+
+function seek(e) {
+    const trailer = document.getElementById('trailer-video');
+    const progressContainer = document.getElementById('progress-container');
+
+    if (!trailer.duration) return;
+
+    const rect = progressContainer.getBoundingClientRect();
+    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    trailer.currentTime = percent * trailer.duration;
+}
+
+function toggleFullscreen() {
+    const wrapper = document.getElementById('trailer-wrapper');
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (wrapper.requestFullscreen) {
+            wrapper.requestFullscreen();
+        } else if (wrapper.webkitRequestFullscreen) {
+            wrapper.webkitRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+}
+
+function updateFullscreenIcon() {
+    const fullscreenIcon = document.getElementById('fullscreen-icon');
+    const exitFullscreenIcon = document.getElementById('exit-fullscreen-icon');
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+
+    if (fullscreenIcon && exitFullscreenIcon) {
+        fullscreenIcon.style.display = isFullscreen ? 'none' : 'block';
+        exitFullscreenIcon.style.display = isFullscreen ? 'block' : 'none';
+    }
+}
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function loadTrailer() {
+    const trailer = document.getElementById('trailer-video');
+    const source = trailer.querySelector('source');
+
+    if (source && source.dataset.src) {
+        source.src = source.dataset.src;
+        trailer.load();
+        trailerLoaded = true;
+    }
+}
+
+function playTrailer() {
+    const trailer = document.getElementById('trailer-video');
+    const overlay = document.getElementById('trailer-play-overlay');
+
+    if (!trailerLoaded) {
+        loadTrailer();
+    }
+
+    overlay.classList.add('hidden');
+    trailer.play();
+}
+
+// ========================================
+// Expandable Cards
+// ========================================
+function initExpandableCards() {
+    // Feature cards
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.classList.add('expandable-card');
+        card.addEventListener('click', () => expandCard(card));
+    });
+
+    // Mode cards
+    document.querySelectorAll('.mode-card').forEach(card => {
+        card.classList.add('expandable-card');
+        card.addEventListener('click', () => expandCard(card));
+    });
+
+    // Class cards
+    document.querySelectorAll('.class-card').forEach(card => {
+        card.classList.add('expandable-card');
+        card.addEventListener('click', () => expandCard(card));
+    });
+
+    // Vehicle cards
+    document.querySelectorAll('.vehicle-card').forEach(card => {
+        card.classList.add('expandable-card');
+        card.addEventListener('click', () => expandCard(card));
+    });
+
+    // Close on overlay click
+    const overlay = document.getElementById('card-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeCardOverlay();
+            }
+        });
+    }
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay && overlay.classList.contains('active')) {
+            closeCardOverlay();
+        }
+    });
+}
+
+function expandCard(card) {
+    const overlay = document.getElementById('card-overlay');
+    const iconImg = document.getElementById('expanded-icon-img');
+    const title = document.getElementById('expanded-title');
+    const desc = document.getElementById('expanded-desc');
+    const statsContainer = document.getElementById('expanded-stats');
+
+    // Get card data
+    const cardIcon = card.querySelector('img');
+    const cardTitle = card.querySelector('h3');
+    const cardDesc = card.querySelector('p');
+    const cardStats = card.querySelector('.class-stats');
+
+    if (cardIcon) iconImg.src = cardIcon.src;
+    if (cardTitle) title.textContent = cardTitle.textContent;
+    if (cardDesc) desc.textContent = cardDesc.textContent;
+
+    // Handle stats for class cards
+    if (cardStats) {
+        statsContainer.innerHTML = cardStats.innerHTML;
+        statsContainer.style.display = 'block';
+    } else {
+        statsContainer.innerHTML = '';
+        statsContainer.style.display = 'none';
+    }
+
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCardOverlay() {
+    const overlay = document.getElementById('card-overlay');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// ========================================
+// Map Lightbox
+// ========================================
+const mapData = [
+    { src: '../assets/images/maps/Archiapelago.jpg', title: 'Archipelago', desc: 'One main island dominates the center with a smaller island accessible by boat where the helicopter spawns. Control the seas and use naval combat to secure air superiority.' },
+    { src: '../assets/images/maps/Blizzard.jpg', title: 'Blizzard', desc: 'Frozen urban warfare with giant collapsible skyscrapers. Excellent for tank gameplay and ATVs. Perfect for snipers with countless hiding spots and vantage points across the frozen cityscape.' },
+    { src: '../assets/images/maps/Desert Oasis.jpg', title: 'Desert Oasis', desc: 'The biggest map in the game. Vast open dunes and ancient ruins create the perfect playground for helicopters and vehicle warfare. Ruins offer close-quarters combat while the open desert favors mobility.' },
+    { src: '../assets/images/maps/Jungle.jpg', title: 'Jungle', desc: 'Dense foliage and hidden dangers. Only ATVs can weave through the thick vegetation. Perfect for sneak attack combat with rivers and destructible cover everywhere.' },
+    { src: '../assets/images/maps/Pleasant Valley (Coming soon).jpg', title: 'Pleasant Valley', desc: 'Rolling hills and rural farmland turned into a warzone. Barns, silos, and farmhouses provide cover across the peaceful countryside. Coming soon!' }
+];
+
+let currentMapIndex = 0;
+
+function initLightbox() {
+    const lightbox = document.getElementById('map-lightbox');
+    if (!lightbox) return;
+
+    // Close on background click
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('active')) return;
+
+        if (e.key === 'Escape') {
+            closeLightbox();
+        } else if (e.key === 'ArrowLeft') {
+            navigateLightbox(-1);
+        } else if (e.key === 'ArrowRight') {
+            navigateLightbox(1);
+        }
+    });
+}
+
+function openLightbox(index) {
+    currentMapIndex = index;
+    const lightbox = document.getElementById('map-lightbox');
+    const image = document.getElementById('lightbox-image');
+    const title = document.getElementById('lightbox-title');
+    const desc = document.getElementById('lightbox-desc');
+
+    image.src = mapData[index].src;
+    title.textContent = mapData[index].title;
+    desc.textContent = mapData[index].desc;
+
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('map-lightbox');
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function navigateLightbox(direction) {
+    currentMapIndex += direction;
+
+    // Loop around
+    if (currentMapIndex < 0) {
+        currentMapIndex = mapData.length - 1;
+    } else if (currentMapIndex >= mapData.length) {
+        currentMapIndex = 0;
+    }
+
+    const image = document.getElementById('lightbox-image');
+    const title = document.getElementById('lightbox-title');
+    const desc = document.getElementById('lightbox-desc');
+
+    image.src = mapData[currentMapIndex].src;
+    title.textContent = mapData[currentMapIndex].title;
+    desc.textContent = mapData[currentMapIndex].desc;
 }
 
 // ========================================
