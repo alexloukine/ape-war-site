@@ -135,12 +135,14 @@
                             Your browser does not support the video tag.
                         </video>
                         <div class="trailer-play-overlay" id="trailer-play-overlay">
-                            <button class="trailer-play-btn" onclick="playTrailer()">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                            </button>
-                            <span class="trailer-label">WATCH TRAILER</span>
+                            <div class="trailer-play-panel">
+                                <button class="trailer-play-btn" onclick="playTrailer()">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </button>
+                                <span class="trailer-label">WATCH TRAILER</span>
+                            </div>
                         </div>
                         <!-- Custom Video Controls -->
                         <div class="video-controls" id="video-controls">
@@ -262,53 +264,33 @@
         <div class="container">
             <h2 class="section-title">CHOOSE YOUR <span class="accent">CLASS</span></h2>
             <div class="classes-grid">
-                <div class="class-card">
+                <div class="class-card assault">
                     <div class="class-image">
                         <img src="assets/images/classes/assault.webp" alt="Assault">
                     </div>
                     <h3>ASSAULT</h3>
                     <p>High damage output with assault rifles and grenades. Lead the charge.</p>
-                    <div class="class-stats">
-                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 85%"></div></div></div>
-                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 70%"></div></div></div>
-                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 60%"></div></div></div>
-                    </div>
                 </div>
-                <div class="class-card">
+                <div class="class-card engineer">
                     <div class="class-image">
                         <img src="assets/images/classes/engineer.webp" alt="Engineer">
                     </div>
                     <h3>ENGINEER</h3>
                     <p>Build defenses and deploy turrets. Control the battlefield with technology.</p>
-                    <div class="class-stats">
-                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 60%"></div></div></div>
-                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 55%"></div></div></div>
-                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 90%"></div></div></div>
-                    </div>
                 </div>
-                <div class="class-card">
+                <div class="class-card recon">
                     <div class="class-image">
                         <img src="assets/images/classes/recon.webp" alt="Recon">
                     </div>
                     <h3>RECON</h3>
                     <p>Sniper specialist with stealth abilities. Strike from the shadows.</p>
-                    <div class="class-stats">
-                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 95%"></div></div></div>
-                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 80%"></div></div></div>
-                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 40%"></div></div></div>
-                    </div>
                 </div>
-                <div class="class-card">
+                <div class="class-card support">
                     <div class="class-image">
                         <img src="assets/images/classes/support.webp" alt="Support">
                     </div>
                     <h3>SUPPORT</h3>
                     <p>Keep your team alive with healing abilities and support gear.</p>
-                    <div class="class-stats">
-                        <div class="stat"><span>DMG</span><div class="stat-bar"><div style="width: 50%"></div></div></div>
-                        <div class="stat"><span>SPD</span><div class="stat-bar"><div style="width: 65%"></div></div></div>
-                        <div class="stat"><span>DEF</span><div class="stat-bar"><div style="width: 75%"></div></div></div>
-                    </div>
                 </div>
             </div>
 
@@ -382,7 +364,7 @@
             <h2 class="section-title">BATTLE <span class="accent">ARENAS</span></h2>
             <p class="section-subtitle">Fully destructible environments across diverse landscapes</p>
             <div class="maps-grid">
-                <div class="map-card" data-map="0" onclick="openLightbox(0)">
+                <div class="map-card archipelago" data-map="0" onclick="openLightbox(0)">
                     <div class="map-placeholder"></div>
                     <img src="assets/images/maps/Archiapelago.jpg" alt="Archipelago Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
@@ -390,7 +372,7 @@
                         <p>Island warfare with naval combat</p>
                     </div>
                 </div>
-                <div class="map-card" data-map="1" onclick="openLightbox(1)">
+                <div class="map-card blizzard" data-map="1" onclick="openLightbox(1)">
                     <div class="map-placeholder"></div>
                     <img src="assets/images/maps/Blizzard.jpg" alt="Blizzard Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
@@ -398,7 +380,7 @@
                         <p>Frozen tundra with limited visibility</p>
                     </div>
                 </div>
-                <div class="map-card" data-map="2" onclick="openLightbox(2)">
+                <div class="map-card desert" data-map="2" onclick="openLightbox(2)">
                     <div class="map-placeholder"></div>
                     <img src="assets/images/maps/Desert Oasis.jpg" alt="Desert Oasis Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
@@ -406,7 +388,7 @@
                         <p>Scorched sands and ancient ruins</p>
                     </div>
                 </div>
-                <div class="map-card" data-map="3" onclick="openLightbox(3)">
+                <div class="map-card jungle" data-map="3" onclick="openLightbox(3)">
                     <div class="map-placeholder"></div>
                     <img src="assets/images/maps/Jungle.jpg" alt="Jungle Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
@@ -414,7 +396,7 @@
                         <p>Dense foliage and hidden dangers</p>
                     </div>
                 </div>
-                <div class="map-card coming-soon" data-map="4" onclick="openLightbox(4)">
+                <div class="map-card valley coming-soon" data-map="4" onclick="openLightbox(4)">
                     <div class="map-placeholder"></div>
                     <img src="assets/images/maps/Pleasant Valley (Coming soon).jpg" alt="Pleasant Valley Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
