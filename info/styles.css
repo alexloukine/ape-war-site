@@ -220,6 +220,16 @@
     color: var(--text-secondary);
 }
 
+/* Light theme section gradients - darker instead of lighter */
+[data-theme="light"] .section::before {
+    background: radial-gradient(
+        ellipse 50% 80% at 50% 20%,
+        rgba(0, 0, 0, 0.02) 0%,
+        rgba(0, 0, 0, 0.01) 30%,
+        transparent 60%
+    );
+}
+
 [data-theme="light"] .scroll-indicator {
     border-color: var(--text-secondary);
 }
@@ -684,6 +694,61 @@ body {
 .section {
     padding: 100px 0;
     position: relative;
+    overflow: hidden;
+}
+
+/* Horizontal spotlight gradient - lighter in center, tapers to edges */
+.section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 100%;
+    background: radial-gradient(
+        ellipse 50% 80% at 50% 20%,
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(255, 255, 255, 0.02) 30%,
+        transparent 60%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Subtle top accent line that fades at edges */
+.section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 1200px;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 107, 53, 0.3) 20%,
+        rgba(255, 107, 53, 0.5) 50%,
+        rgba(255, 107, 53, 0.3) 80%,
+        transparent 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Ensure content stays above the gradient */
+.section > .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Don't apply to hero or features section (first content section) */
+.hero-section::before,
+.hero-section::after,
+.features-section::after {
+    display: none;
 }
 
 .section-title {

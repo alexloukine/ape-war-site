@@ -445,7 +445,7 @@ const mapData = [
     { src: '../assets/images/maps/Archiapelago.jpg', title: 'Archipelago', desc: 'One main island dominates the center with a smaller island accessible by boat where the helicopter spawns. Control the seas and use naval combat to secure air superiority.' },
     { src: '../assets/images/maps/Blizzard.jpg', title: 'Blizzard', desc: 'Frozen urban warfare with giant collapsible skyscrapers. Excellent for tank gameplay and ATVs. Perfect for snipers with countless hiding spots and vantage points across the frozen cityscape.' },
     { src: '../assets/images/maps/Desert Oasis.jpg', title: 'Desert Oasis', desc: 'The biggest map in the game. Vast open dunes and ancient ruins create the perfect playground for helicopters and vehicle warfare. Ruins offer close-quarters combat while the open desert favors mobility.' },
-    { src: '../assets/images/maps/Jungle.jpg', title: 'Jungle', desc: 'Dense foliage and hidden dangers. Only ATVs can weave through the thick vegetation. Perfect for sneak attack combat with rivers and destructible cover everywhere.' },
+    { src: '../assets/images/maps/Jungle.jpg', title: 'Jungle', desc: 'Dense foliage and hidden dangers. Only ATVs can weave through the thick vegetation. Perfect for ambush tactics with rivers and destructible cover everywhere.' },
     { src: '../assets/images/maps/Pleasant Valley (Coming soon).jpg', title: 'Pleasant Valley', desc: 'Rolling hills and rural farmland turned into a warzone. Barns, silos, and farmhouses provide cover across the peaceful countryside. Coming soon!' }
 ];
 
