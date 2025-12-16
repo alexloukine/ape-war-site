@@ -691,13 +691,11 @@
         }
 
         var buildUrl = "../Chimp War/Build";
-        // Large files hosted on CDN (Cloudflare R2) - update this URL after uploading
-        var cdnUrl = "https://apewar-assets.YOUR_ACCOUNT.r2.dev";
         var loaderUrl = buildUrl + "/ChimpWar.loader.js";
         var config = {
-            dataUrl: cdnUrl + "/ChimpWar.data",
+            dataUrl: buildUrl + "/ChimpWar.data",
             frameworkUrl: buildUrl + "/ChimpWar.framework.js",
-            codeUrl: cdnUrl + "/ChimpWar.wasm",
+            codeUrl: buildUrl + "/ChimpWar.wasm",
             symbolsUrl: buildUrl + "/ChimpWar.symbols.json",
             streamingAssetsUrl: "../Chimp War/StreamingAssets",
             companyName: "DefaultCompany",
