@@ -1,4 +1,4 @@
-const GITHUB_RELEASE_URL = "https://github.com/alexloukine/ape-war-site/releases/download/assets-v2/Chimp%20War.data.unityweb";
+const GITHUB_RELEASE_URL = "https://github.com/alexloukine/ape-war-site/releases/download/assets-v3/Chimp%20War.data.unityweb";
 
 export default {
   async fetch(request) {
