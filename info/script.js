@@ -2,8 +2,9 @@
 // ApeFortress 2 - Main JavaScript
 // ========================================
 
-// Contract Address (change this when you have one)
-const CONTRACT_ADDRESS = 'TBA';
+// Contract Address
+const CONTRACT_ADDRESS = '9fnZwY9i7Mi8UM4Yn9y7yHxb7eV5nd545PbDuo4apump';
+const PUMP_FUN_URL = 'https://pump.fun/coin/9fnZwY9i7Mi8UM4Yn9y7yHxb7eV5nd545PbDuo4apump';
 
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
