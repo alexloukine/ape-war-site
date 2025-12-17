@@ -691,8 +691,8 @@
         }
 
         var buildUrl = "../Chimp War/Build";
-        // DATA FILE: Hosted on GitHub Releases (101MB, Brotli compressed)
-        var dataUrl = "https://github.com/alexloukine/ape-war-site/releases/download/assets-v2/Chimp%20War.data.unityweb";
+        // DATA FILE: Proxied via Cloudflare Worker (adds CORS headers)
+        var dataUrl = "https://apewar-data.alexander-loukine.workers.dev/ChimpWar.data.unityweb";
         var loaderUrl = buildUrl + "/Chimp War.loader.js";
         var config = {
             dataUrl: dataUrl,
