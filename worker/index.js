@@ -1,4 +1,4 @@
-const GITHUB_RELEASE_URL = "https://github.com/alexloukine/ape-war-site/releases/download/assets-v4/Chimp.War.data.gz";
+const GITHUB_RELEASE_URL = "https://github.com/alexloukine/ape-war-site/releases/download/assets-v5/Chimp.War.data.unityweb";
 
 export default {
   async fetch(request) {
@@ -19,7 +19,7 @@ export default {
     return new Response(response.body, {
       headers: {
         "Content-Type": "application/octet-stream",
-        "Content-Encoding": "gzip",
+        "Content-Encoding": "br",
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "public, max-age=31536000",
       },
