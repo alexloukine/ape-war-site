@@ -1,31 +1,24 @@
 {
   "headers": [
     {
-      "source": "/(.*).wasm.gz",
+      "source": "/(.*).wasm.unityweb",
       "headers": [
         { "key": "Content-Type", "value": "application/wasm" },
-        { "key": "Content-Encoding", "value": "gzip" }
+        { "key": "Content-Encoding", "value": "br" }
       ]
     },
     {
-      "source": "/(.*).data.gz",
-      "headers": [
-        { "key": "Content-Type", "value": "application/octet-stream" },
-        { "key": "Content-Encoding", "value": "gzip" }
-      ]
-    },
-    {
-      "source": "/(.*).js.gz",
+      "source": "/(.*).framework.js.unityweb",
       "headers": [
         { "key": "Content-Type", "value": "application/javascript" },
-        { "key": "Content-Encoding", "value": "gzip" }
+        { "key": "Content-Encoding", "value": "br" }
       ]
     },
     {
-      "source": "/(.*).symbols.json.gz",
+      "source": "/(.*).symbols.json.unityweb",
       "headers": [
         { "key": "Content-Type", "value": "application/json" },
-        { "key": "Content-Encoding", "value": "gzip" }
+        { "key": "Content-Encoding", "value": "br" }
       ]
     }
   ]

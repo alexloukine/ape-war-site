@@ -691,14 +691,14 @@
         }
 
         var buildUrl = "../Chimp War/Build";
-        // DATA FILE: Proxied via Cloudflare Worker (CORS-enabled, decompressed)
-        var dataUrl = "https://apewar-data.alexander-loukine.workers.dev/ChimpWar.data";
-        var loaderUrl = buildUrl + "/ChimpWar.loader.js";
+        // DATA FILE: Hosted on GitHub Releases (101MB, Brotli compressed)
+        var dataUrl = "https://github.com/alexloukine/ape-war-site/releases/download/assets-v2/Chimp%20War.data.unityweb";
+        var loaderUrl = buildUrl + "/Chimp War.loader.js";
         var config = {
             dataUrl: dataUrl,
-            frameworkUrl: buildUrl + "/ChimpWar.framework.js.gz",
-            codeUrl: buildUrl + "/ChimpWar.wasm.gz",
-            symbolsUrl: buildUrl + "/ChimpWar.symbols.json.gz",
+            frameworkUrl: buildUrl + "/Chimp War.framework.js.unityweb",
+            codeUrl: buildUrl + "/Chimp War.wasm.unityweb",
+            symbolsUrl: buildUrl + "/Chimp War.symbols.json.unityweb",
             streamingAssetsUrl: "../Chimp War/StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
