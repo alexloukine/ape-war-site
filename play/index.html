@@ -692,13 +692,13 @@
 
         var buildUrl = "../Chimp War/Build";
         // DATA FILE: Proxied via Cloudflare Worker (adds CORS headers)
-        var dataUrl = "https://apewar-data.alexander-loukine.workers.dev/ChimpWar.data.unityweb";
+        var dataUrl = "https://apewar-data.alexander-loukine.workers.dev/ChimpWar.data.gz";
         var loaderUrl = buildUrl + "/Chimp War.loader.js";
         var config = {
             dataUrl: dataUrl,
-            frameworkUrl: buildUrl + "/Chimp War.framework.js.unityweb",
-            codeUrl: buildUrl + "/Chimp War.wasm.unityweb",
-            symbolsUrl: buildUrl + "/Chimp War.symbols.json.unityweb",
+            frameworkUrl: buildUrl + "/Chimp War.framework.js.gz",
+            codeUrl: buildUrl + "/Chimp War.wasm.gz",
+            symbolsUrl: buildUrl + "/Chimp War.symbols.json.gz",
             streamingAssetsUrl: "../Chimp War/StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
