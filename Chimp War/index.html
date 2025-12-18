@@ -65,43 +65,6 @@
             visibility: hidden;
         }
 
-        /* Animated background particles */
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(249, 115, 22, 0.2);
-            border-radius: 50%;
-            animation: float-up 8s infinite linear;
-        }
-
-        @keyframes float-up {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) scale(1);
-                opacity: 0;
-            }
-        }
-
         /* Logo/icon container animation */
         .logo-container {
             position: relative;
@@ -342,42 +305,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Fullscreen button */
-        #fullscreen-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
-            background: rgba(249, 115, 22, 0.2);
-            border: 1px solid rgba(249, 115, 22, 0.4);
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 150;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s ease;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #fullscreen-btn.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #fullscreen-btn:hover {
-            background: rgba(249, 115, 22, 0.4);
-            transform: scale(1.1);
-        }
-
-        #fullscreen-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
-        }
-
         /* Mobile optimizations */
         @media (max-width: 480px) {
             .logo-container {
@@ -394,21 +321,12 @@
             .loading-percent {
                 font-size: 22px;
             }
-            #fullscreen-btn {
-                bottom: 10px;
-                right: 10px;
-                width: 36px;
-                height: 36px;
-            }
         }
     </style>
 </head>
 <body>
     <!-- Loading screen renders immediately, no JS required -->
     <div id="loading-screen">
-        <!-- Animated background particles -->
-        <div class="particles" id="particles"></div>
-
         <!-- Animated logo/icon -->
         <div class="logo-container">
             <div class="glow-ring"></div>
@@ -449,27 +367,7 @@
 
     <div id="unity-warning"></div>
 
-    <!-- Fullscreen button (hidden during loading) -->
-    <button id="fullscreen-btn" title="Toggle Fullscreen">
-        <svg viewBox="0 0 24 24" id="fullscreen-icon">
-            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
-        </svg>
-    </button>
-
     <script>
-        // Generate floating particles
-        (function() {
-            var particlesContainer = document.getElementById('particles');
-            for (var i = 0; i < 20; i++) {
-                var particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 8 + 's';
-                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
-                particlesContainer.appendChild(particle);
-            }
-        })();
-
         // Controls rotation - cycle through individual controls
         var tips = [
             "WASD - Move",
@@ -502,58 +400,6 @@
     <script>
         // Global Unity instance reference
         var unityInstance = null;
-
-        // Fullscreen handling
-        var fullscreenBtn = document.getElementById('fullscreen-btn');
-        var fullscreenIcon = document.getElementById('fullscreen-icon');
-
-        function isFullscreen() {
-            return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-        }
-
-        function updateFullscreenIcon() {
-            if (isFullscreen()) {
-                // Exit fullscreen icon
-                fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
-            } else {
-                // Enter fullscreen icon
-                fullscreenIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
-            }
-        }
-
-        function toggleFullscreen() {
-            var elem = document.documentElement;
-            if (!isFullscreen()) {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                } else if (elem.mozRequestFullScreen) {
-                    elem.mozRequestFullScreen();
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-            }
-        }
-
-        fullscreenBtn.addEventListener('click', toggleFullscreen);
-        document.addEventListener('fullscreenchange', updateFullscreenIcon);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
-        document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
-        document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
-    </script>
-
-    <script>
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
         var loadingScreen = document.querySelector("#loading-screen");
@@ -739,9 +585,6 @@
 
                         // Fade out loading screen
                         loadingScreen.classList.add('fade-out');
-
-                        // Show fullscreen button
-                        fullscreenBtn.classList.add('visible');
 
                         // Focus canvas after a brief delay
                         setTimeout(function() {

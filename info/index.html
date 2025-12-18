@@ -7,8 +7,8 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="preload" as="image" href="assets/images/hero-poster.jpg" fetchpriority="high">
-    <link rel="preload" as="video" href="assets/videos/hero-video.mp4" fetchpriority="high">
+    <link rel="preload" as="image" href="../assets/images/hero-poster.jpg" fetchpriority="high">
+    <link rel="preload" as="video" href="../assets/videos/hero-video.mp4" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -50,15 +50,15 @@
                     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
                 </svg>
             </button>
-            <a href="/play" class="nav-cta">PLAY NOW</a>
+            <a href="/" class="nav-cta">PLAY NOW</a>
         </div>
     </nav>
 
     <!-- Hero Section with Full Screen Video -->
     <section id="hero" class="hero-section">
         <div class="video-container">
-            <video autoplay muted loop playsinline preload="auto" id="hero-video" poster="assets/images/hero-poster.jpg">
-                <source src="assets/videos/hero-video.mp4" type="video/mp4">
+            <video autoplay muted loop playsinline preload="auto" id="hero-video" poster="../assets/images/hero-poster.jpg">
+                <source src="../assets/videos/hero-video.mp4" type="video/mp4">
             </video>
             <div class="video-overlay"></div>
         </div>
@@ -82,7 +82,7 @@
             </div>
 
             <div class="hero-buttons">
-                <a href="/play" class="btn btn-primary pulse">
+                <a href="/" class="btn btn-primary pulse">
                     <span class="btn-icon">&#9658;</span>
                     PLAY NOW
                 </a>
@@ -131,7 +131,7 @@
                             preload="metadata"
                             poster=""
                         >
-                            <source data-src="assets/videos/trailer-compressed.mp4" type="video/mp4">
+                            <source data-src="../assets/videos/trailer-compressed.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                         <div class="trailer-play-overlay" id="trailer-play-overlay">
@@ -183,42 +183,42 @@
             <div class="features-grid">
                 <div class="feature-card" data-aos="fade-up">
                     <div class="feature-icon">
-                        <img src="assets/images/icons/users.svg" alt="Multiplayer">
+                        <img src="../assets/images/icons/users.svg" alt="Multiplayer">
                     </div>
                     <h3>FULL MULTIPLAYER</h3>
                     <p>Battle against players worldwide in intense real-time combat. No bots, just pure competitive chaos.</p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="feature-icon">
-                        <img src="assets/images/icons/destruction.svg" alt="Destruction">
+                        <img src="../assets/images/icons/destruction.svg" alt="Destruction">
                     </div>
                     <h3>TOTAL DESTRUCTION</h3>
                     <p>Every wall, building, and structure can be destroyed. Shape the battlefield to your advantage.</p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="feature-icon">
-                        <img src="assets/images/icons/tank.svg" alt="Vehicles">
+                        <img src="../assets/images/icons/tank.svg" alt="Vehicles">
                     </div>
                     <h3>VEHICLES</h3>
                     <p>Tanks, helicopters, boats, quadbikes, and the legendary Lada. Dominate land, sea, and air.</p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="feature-icon">
-                        <img src="assets/images/icons/mic.png" alt="Proximity Chat">
+                        <img src="../assets/images/icons/mic.png" alt="Proximity Chat">
                     </div>
                     <h3>PROXIMITY CHAT</h3>
                     <p>Hear nearby players. Coordinate with allies, trash talk enemies, or make unexpected alliances.</p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
                     <div class="feature-icon">
-                        <img src="assets/images/icons/shield.png" alt="No Pay to Win">
+                        <img src="../assets/images/icons/shield.png" alt="No Pay to Win">
                     </div>
                     <h3>NO PAY TO WIN</h3>
                     <p>Skill wins games, not wallets. Cosmetics only. Fair play for everyone, always.</p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
                     <div class="feature-icon">
-                        <img src="assets/images/icons/globe.svg" alt="Cross-Platform">
+                        <img src="../assets/images/icons/globe.svg" alt="Cross-Platform">
                     </div>
                     <h3>CROSS-PLATFORM</h3>
                     <p>Play on Web or Steam. Same servers, same chaos. Your progress syncs everywhere.</p>
@@ -243,7 +243,7 @@
                         playsinline
                         autoplay
                     >
-                        <source src="assets/videos/proximity-chat.mp4" type="video/mp4">
+                        <source src="../assets/videos/proximity-chat.mp4" type="video/mp4">
                     </video>
                     <button class="unmute-btn" id="unmute-btn" title="Click to unmute">
                         <svg class="muted-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -266,28 +266,28 @@
             <div class="classes-grid">
                 <div class="class-card assault">
                     <div class="class-image">
-                        <img src="assets/images/classes/assault.webp" alt="Assault">
+                        <img src="../assets/images/classes/assault.webp" alt="Assault">
                     </div>
                     <h3>ASSAULT</h3>
                     <p>High damage output with assault rifles and grenades. Lead the charge.</p>
                 </div>
                 <div class="class-card engineer">
                     <div class="class-image">
-                        <img src="assets/images/classes/engineer.webp" alt="Engineer">
+                        <img src="../assets/images/classes/engineer.webp" alt="Engineer">
                     </div>
                     <h3>ENGINEER</h3>
                     <p>Build defenses and deploy turrets. Control the battlefield with technology.</p>
                 </div>
                 <div class="class-card recon">
                     <div class="class-image">
-                        <img src="assets/images/classes/recon.webp" alt="Recon">
+                        <img src="../assets/images/classes/recon.webp" alt="Recon">
                     </div>
                     <h3>RECON</h3>
                     <p>Sniper specialist with stealth abilities. Strike from the shadows.</p>
                 </div>
                 <div class="class-card support">
                     <div class="class-image">
-                        <img src="assets/images/classes/support.webp" alt="Support">
+                        <img src="../assets/images/classes/support.webp" alt="Support">
                     </div>
                     <h3>SUPPORT</h3>
                     <p>Keep your team alive with healing abilities and support gear.</p>
@@ -298,14 +298,14 @@
             <div class="movement-showcase">
                 <div class="movement-item">
                     <div class="movement-icon rocket">
-                        <img src="assets/images/icons/rocket.png" alt="Rocket Jump">
+                        <img src="../assets/images/icons/rocket.png" alt="Rocket Jump">
                     </div>
                     <h4>ROCKET JUMP</h4>
                     <p>Blast yourself skyward for tactical positioning.</p>
                 </div>
                 <div class="movement-item">
                     <div class="movement-icon double-jump">
-                        <img src="assets/images/icons/boots.svg" alt="Double Jump">
+                        <img src="../assets/images/icons/boots.svg" alt="Double Jump">
                     </div>
                     <h4>DOUBLE JUMP</h4>
                     <p>Enhanced mobility for dodging and traversal.</p>
@@ -321,35 +321,35 @@
             <div class="vehicles-grid">
                 <div class="vehicle-card">
                     <div class="vehicle-image">
-                        <img src="assets/images/vehicles/tank.webp" alt="Tank">
+                        <img src="../assets/images/vehicles/tank.webp" alt="Tank">
                     </div>
                     <h3>TANK</h3>
                     <p>Heavy armor, devastating firepower</p>
                 </div>
                 <div class="vehicle-card">
                     <div class="vehicle-image">
-                        <img src="assets/images/vehicles/heli.webp" alt="Helicopter">
+                        <img src="../assets/images/vehicles/heli.webp" alt="Helicopter">
                     </div>
                     <h3>HELICOPTER</h3>
                     <p>Air superiority and rapid deployment</p>
                 </div>
                 <div class="vehicle-card">
                     <div class="vehicle-image">
-                        <img src="assets/images/vehicles/boat.webp" alt="RHIB">
+                        <img src="../assets/images/vehicles/boat.webp" alt="RHIB">
                     </div>
                     <h3>RHIB</h3>
                     <p>Naval dominance and coastal raids</p>
                 </div>
                 <div class="vehicle-card">
                     <div class="vehicle-image">
-                        <img src="assets/images/vehicles/quad.webp" alt="Quadbike">
+                        <img src="../assets/images/vehicles/quad.webp" alt="Quadbike">
                     </div>
                     <h3>QUADBIKE</h3>
                     <p>Fast terrain traversal</p>
                 </div>
                 <div class="vehicle-card">
                     <div class="vehicle-image">
-                        <img src="assets/images/vehicles/lada.webp" alt="Lada">
+                        <img src="../assets/images/vehicles/lada.webp" alt="Lada">
                     </div>
                     <h3>LADA</h3>
                     <p>The legendary ride. Indestructible spirit.</p>
@@ -366,7 +366,7 @@
             <div class="maps-grid">
                 <div class="map-card archipelago" data-map="0" onclick="openLightbox(0)">
                     <div class="map-placeholder"></div>
-                    <img src="assets/images/maps/Archiapelago.jpg" alt="Archipelago Map" loading="lazy" class="lazy-image">
+                    <img src="../assets/images/maps/Archiapelago.jpg" alt="Archipelago Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
                         <h3>ARCHIPELAGO</h3>
                         <p>Island warfare with naval combat</p>
@@ -374,7 +374,7 @@
                 </div>
                 <div class="map-card blizzard" data-map="1" onclick="openLightbox(1)">
                     <div class="map-placeholder"></div>
-                    <img src="assets/images/maps/Blizzard.jpg" alt="Blizzard Map" loading="lazy" class="lazy-image">
+                    <img src="../assets/images/maps/Blizzard.jpg" alt="Blizzard Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
                         <h3>BLIZZARD</h3>
                         <p>Frozen tundra with limited visibility</p>
@@ -382,7 +382,7 @@
                 </div>
                 <div class="map-card desert" data-map="2" onclick="openLightbox(2)">
                     <div class="map-placeholder"></div>
-                    <img src="assets/images/maps/Desert Oasis.jpg" alt="Desert Oasis Map" loading="lazy" class="lazy-image">
+                    <img src="../assets/images/maps/Desert Oasis.jpg" alt="Desert Oasis Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
                         <h3>DESERT OASIS</h3>
                         <p>Scorched sands and ancient ruins</p>
@@ -390,7 +390,7 @@
                 </div>
                 <div class="map-card jungle" data-map="3" onclick="openLightbox(3)">
                     <div class="map-placeholder"></div>
-                    <img src="assets/images/maps/Jungle.jpg" alt="Jungle Map" loading="lazy" class="lazy-image">
+                    <img src="../assets/images/maps/Jungle.jpg" alt="Jungle Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
                         <h3>JUNGLE</h3>
                         <p>Dense foliage and hidden dangers</p>
@@ -398,7 +398,7 @@
                 </div>
                 <div class="map-card valley coming-soon" data-map="4" onclick="openLightbox(4)">
                     <div class="map-placeholder"></div>
-                    <img src="assets/images/maps/Pleasant Valley (Coming soon).jpg" alt="Pleasant Valley Map" loading="lazy" class="lazy-image">
+                    <img src="../assets/images/maps/Pleasant Valley (Coming soon).jpg" alt="Pleasant Valley Map" loading="lazy" class="lazy-image">
                     <div class="map-overlay">
                         <h3>PLEASANT VALLEY</h3>
                         <span class="coming-soon-badge">COMING SOON</span>
@@ -415,21 +415,21 @@
             <div class="modes-container">
                 <div class="mode-card">
                     <div class="mode-icon ffa">
-                        <img src="assets/images/icons/skull.svg" alt="Free For All">
+                        <img src="../assets/images/icons/skull.svg" alt="Free For All">
                     </div>
                     <h3>FREE FOR ALL</h3>
                     <p>Every ape for themselves. Last one standing wins. Pure mayhem.</p>
                 </div>
                 <div class="mode-card">
                     <div class="mode-icon tdm">
-                        <img src="assets/images/icons/swords.svg" alt="Team Deathmatch">
+                        <img src="../assets/images/icons/swords.svg" alt="Team Deathmatch">
                     </div>
                     <h3>TEAM DEATHMATCH</h3>
                     <p>Squad up and dominate. Coordinate destruction and eliminate the enemy team.</p>
                 </div>
                 <div class="mode-card">
                     <div class="mode-icon ctf">
-                        <img src="assets/images/icons/flag.svg" alt="Capture The Flag">
+                        <img src="../assets/images/icons/flag.svg" alt="Capture The Flag">
                     </div>
                     <h3>CAPTURE THE FLAG</h3>
                     <p>Strategic warfare. Defend your base, raid theirs. Teamwork is essential.</p>
@@ -498,21 +498,21 @@
             <div class="tokenomics-grid">
                 <div class="token-card">
                     <div class="token-card-icon burn">
-                        <img src="assets/images/icons/fire.svg" alt="Burn">
+                        <img src="../assets/images/icons/fire.svg" alt="Burn">
                     </div>
                     <h3>100% BURN</h3>
                     <p>Every cosmetic purchase burns 100% of the tokens used. Maximum deflation.</p>
                 </div>
                 <div class="token-card">
                     <div class="token-card-icon cosmetics">
-                        <img src="assets/images/icons/crown.png" alt="Cosmetics">
+                        <img src="../assets/images/icons/crown.png" alt="Cosmetics">
                     </div>
                     <h3>COSMETICS</h3>
                     <p>Buy exclusive hats, capes, and gun skins with $APE. Look legendary on the battlefield.</p>
                 </div>
                 <div class="token-card">
                     <div class="token-card-icon rewards">
-                        <img src="assets/images/icons/trophy.svg" alt="Rewards">
+                        <img src="../assets/images/icons/trophy.svg" alt="Rewards">
                     </div>
                     <h3>12.5% CREATOR FEES</h3>
                     <p>Top 3 players each hour split 12.5% of all Pump.fun trading volume. Skill pays.</p>
@@ -586,7 +586,7 @@
             <h2 class="section-title">JOIN THE <span class="accent">CHAOS</span></h2>
             <p class="section-subtitle">Available on Web & Steam</p>
             <div class="play-buttons">
-                <a href="/play" class="play-btn web-btn">
+                <a href="/" class="play-btn web-btn">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                     PLAY ON WEB <span class="beta-tag">(ALPHA)</span>
                 </a>
