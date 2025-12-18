@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initExpandableCards();
     initTrailer();
     initProximityChat();
+    initLootLockerLeaderboard();
     updateAllCA();
     document.body.classList.add('loaded');
 });
@@ -893,3 +894,202 @@ const optimizedScroll = throttle(() => {
 }, 16);
 
 window.addEventListener('scroll', optimizedScroll);
+
+// ========================================
+// LootLocker Leaderboard Integration
+// ========================================
+const LOOTLOCKER_GAME_KEY = 'dev_37197e1a9f474bca9bf8f6ad69eb65a7';
+const LEADERBOARD_KEY = 'global_kills_3h';
+const LEADERBOARD_COUNT = 20;
+const LEADERBOARD_REFRESH_INTERVAL = 30000; // 30 seconds
+
+let lootLockerSessionToken = null;
+let leaderboardRefreshTimer = null;
+
+async function initLootLockerLeaderboard() {
+    const entriesContainer = document.getElementById('leaderboard-entries');
+    const timerElement = document.getElementById('reset-timer');
+
+    if (!entriesContainer) return;
+
+    // Start the countdown timer
+    if (timerElement) {
+        updateResetTimer();
+        setInterval(updateResetTimer, 1000);
+    }
+
+    // Fetch leaderboard data
+    await refreshLeaderboard();
+
+    // Set up auto-refresh
+    leaderboardRefreshTimer = setInterval(refreshLeaderboard, LEADERBOARD_REFRESH_INTERVAL);
+}
+
+async function createGuestSession() {
+    try {
+        const response = await fetch('https://api.lootlocker.io/game/v2/session/guest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                game_key: LOOTLOCKER_GAME_KEY,
+                game_version: '1.0.0.0'
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.session_token) {
+            return data.session_token;
+        }
+
+        throw new Error('No session token in response');
+    } catch (error) {
+        console.error('LootLocker guest session error:', error);
+        return null;
+    }
+}
+
+async function fetchLeaderboard(sessionToken) {
+    try {
+        const response = await fetch(
+            `https://api.lootlocker.io/game/leaderboards/${LEADERBOARD_KEY}/list?count=${LEADERBOARD_COUNT}`,
+            {
+                headers: { 'x-session-token': sessionToken }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('LootLocker leaderboard fetch error:', error);
+        return null;
+    }
+}
+
+async function refreshLeaderboard() {
+    const entriesContainer = document.getElementById('leaderboard-entries');
+    const loadingEl = document.getElementById('leaderboard-loading');
+
+    if (!entriesContainer) return;
+
+    // Ensure we have a session token
+    if (!lootLockerSessionToken) {
+        lootLockerSessionToken = await createGuestSession();
+
+        if (!lootLockerSessionToken) {
+            renderLeaderboardError(entriesContainer, 'Failed to connect to leaderboard service');
+            return;
+        }
+    }
+
+    // Fetch leaderboard data
+    const data = await fetchLeaderboard(lootLockerSessionToken);
+
+    if (!data) {
+        // Session might have expired, try to get a new one
+        lootLockerSessionToken = await createGuestSession();
+
+        if (lootLockerSessionToken) {
+            const retryData = await fetchLeaderboard(lootLockerSessionToken);
+            if (retryData) {
+                renderLeaderboard(entriesContainer, retryData);
+                return;
+            }
+        }
+
+        renderLeaderboardError(entriesContainer, 'Failed to load leaderboard data');
+        return;
+    }
+
+    renderLeaderboard(entriesContainer, data);
+}
+
+function renderLeaderboard(container, data) {
+    // Check if we have entries
+    if (!data.items || data.items.length === 0) {
+        container.innerHTML = `
+            <div class="leaderboard-empty">
+                <p>No players on the leaderboard yet.</p>
+                <p>Be the first to compete!</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Build leaderboard entries HTML
+    const entriesHTML = data.items.map(item => {
+        const rank = item.rank;
+        const playerName = item.player?.name || item.player?.public_uid || `Player_${item.member_id}`;
+        const kills = item.score;
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+
+        return `
+            <div class="leaderboard-entry ${rankClass}">
+                <span class="lb-rank">#${rank}</span>
+                <span class="lb-player">${escapeHtml(playerName)}</span>
+                <span class="lb-kills">${kills}</span>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = entriesHTML;
+}
+
+function renderLeaderboardError(container, message) {
+    container.innerHTML = `
+        <div class="leaderboard-error">
+            <p>${escapeHtml(message)}</p>
+            <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
+                Will retry automatically...
+            </p>
+        </div>
+    `;
+}
+
+function updateResetTimer() {
+    const timerElement = document.getElementById('reset-timer');
+    if (!timerElement) return;
+
+    const now = new Date();
+    const utcHour = now.getUTCHours();
+    const utcMinutes = now.getUTCMinutes();
+    const utcSeconds = now.getUTCSeconds();
+
+    // Reset happens at 0, 3, 6, 9, 12, 15, 18, 21 UTC
+    let nextResetHour = (Math.floor(utcHour / 3) + 1) * 3;
+    if (nextResetHour >= 24) nextResetHour = 0;
+
+    // Calculate time until next reset
+    let hoursLeft = nextResetHour - utcHour - 1;
+    if (hoursLeft < 0) hoursLeft += 24;
+
+    let minutesLeft = 59 - utcMinutes;
+    let secondsLeft = 59 - utcSeconds;
+
+    // Adjust for edge cases
+    if (secondsLeft === 59 && utcSeconds === 0) {
+        secondsLeft = 0;
+        minutesLeft++;
+    }
+    if (minutesLeft === 60) {
+        minutesLeft = 0;
+        hoursLeft++;
+    }
+
+    // Format as HH:MM:SS
+    const timeString = `${String(hoursLeft).padStart(2, '0')}:${String(minutesLeft).padStart(2, '0')}:${String(secondsLeft).padStart(2, '0')}`;
+    timerElement.textContent = timeString;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}

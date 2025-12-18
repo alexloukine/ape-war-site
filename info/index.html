@@ -438,6 +438,37 @@
         </div>
     </section>
 
+    <!-- Leaderboard Section -->
+    <section id="leaderboard" class="section leaderboard-section">
+        <div class="container">
+            <h2 class="section-title">LIVE <span class="accent">LEADERBOARD</span></h2>
+            <p class="section-subtitle">Top players reset every 3 hours. Compete for glory!</p>
+
+            <!-- Reset Timer -->
+            <div class="reset-timer">
+                <span class="timer-label">RESETS IN</span>
+                <span class="timer-value" id="reset-timer">--:--:--</span>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <span class="lb-col-rank">RANK</span>
+                    <span class="lb-col-player">PLAYER</span>
+                    <span class="lb-col-kills">KILLS</span>
+                </div>
+                <div class="leaderboard-entries" id="leaderboard-entries">
+                    <div class="leaderboard-loading" id="leaderboard-loading">
+                        <div class="loading-spinner"></div>
+                        <span>Loading leaderboard...</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="leaderboard-note">Data refreshes automatically every 30 seconds</p>
+        </div>
+    </section>
+
     <!-- Map Lightbox -->
     <div id="map-lightbox" class="lightbox">
         <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
