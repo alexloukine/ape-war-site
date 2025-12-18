@@ -434,8 +434,14 @@
             if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
                 window.wasdKeyStates[key] = true;
             }
-            // Prevent browser shortcuts from intercepting game keys
-            if (["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
+
+            // Check if user is typing in a text input - if so, don't block keys
+            var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+            var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
+                           (document.activeElement && document.activeElement.isContentEditable);
+
+            // Prevent browser shortcuts from intercepting game keys (only when not typing)
+            if (!isTyping && ["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
                 e.preventDefault();
             }
         }, true);
@@ -459,6 +465,29 @@
         window.getWASDState = function() {
             return JSON.stringify(window.wasdKeyStates);
         };
+
+        // Mouse Movement Bridge for Pointer Lock API
+        // Tracks raw mouse movement deltas that work even at screen edges
+        window.mouseMovementState = { deltaX: 0, deltaY: 0 };
+
+        document.addEventListener('mousemove', function(e) {
+            // movementX/Y are raw deltas from Pointer Lock API
+            // These provide unbounded movement even when cursor hits screen edge
+            window.mouseMovementState.deltaX += e.movementX || 0;
+            window.mouseMovementState.deltaY += e.movementY || 0;
+        });
+
+        // Reset mouse deltas on focus loss (prevents jump when regaining focus)
+        window.addEventListener('blur', function() {
+            window.mouseMovementState.deltaX = 0;
+            window.mouseMovementState.deltaY = 0;
+        });
+
+        // Also reset on pointer lock change (prevents residual deltas)
+        document.addEventListener('pointerlockchange', function() {
+            window.mouseMovementState.deltaX = 0;
+            window.mouseMovementState.deltaY = 0;
+        });
 
         // Enhanced focus handling for Chrome and other browsers
         function focusCanvas() {
