@@ -431,8 +431,14 @@
             if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
                 window.wasdKeyStates[key] = true;
             }
-            // Prevent browser shortcuts from intercepting game keys
-            if (["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
+
+            // Check if user is typing in a text input - if so, don't block keys
+            var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+            var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
+                           (document.activeElement && document.activeElement.isContentEditable);
+
+            // Prevent browser shortcuts from intercepting game keys (only when not typing)
+            if (!isTyping && ["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
                 e.preventDefault();
             }
         }, true);
