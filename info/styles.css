@@ -2095,6 +2095,10 @@ body {
     text-transform: uppercase;
 }
 
+.leaderboard-header .lb-col-kills {
+    text-align: right;
+}
+
 .leaderboard-entries {
     max-height: 600px;
     overflow-y: auto;
