@@ -457,6 +457,29 @@
             return JSON.stringify(window.wasdKeyStates);
         };
 
+        // Mouse Movement Bridge for Pointer Lock API
+        // Tracks raw mouse movement deltas that work even at screen edges
+        window.mouseMovementState = { deltaX: 0, deltaY: 0 };
+
+        document.addEventListener('mousemove', function(e) {
+            // movementX/Y are raw deltas from Pointer Lock API
+            // These provide unbounded movement even when cursor hits screen edge
+            window.mouseMovementState.deltaX += e.movementX || 0;
+            window.mouseMovementState.deltaY += e.movementY || 0;
+        });
+
+        // Reset mouse deltas on focus loss (prevents jump when regaining focus)
+        window.addEventListener('blur', function() {
+            window.mouseMovementState.deltaX = 0;
+            window.mouseMovementState.deltaY = 0;
+        });
+
+        // Also reset on pointer lock change (prevents residual deltas)
+        document.addEventListener('pointerlockchange', function() {
+            window.mouseMovementState.deltaX = 0;
+            window.mouseMovementState.deltaY = 0;
+        });
+
         // Enhanced focus handling for Chrome and other browsers
         function focusCanvas() {
             canvas.focus();
