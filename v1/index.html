@@ -53,7 +53,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('loader-bg.jpg');
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('../Chimp%20War/loader-bg.jpg');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -96,7 +96,7 @@
             object-fit: cover;
         }
 
-        /* Fallback icon when no logo.jpg exists */
+        /* Fallback icon when no logo.png exists */
         .logo-fallback {
             width: 100%;
             height: 100%;
@@ -120,12 +120,10 @@
         /* Glow ring around logo */
         .glow-ring {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            inset: 0;
+            margin: auto;
             width: 140px;
             height: 140px;
-            margin-left: -70px;
-            margin-top: -70px;
             border: 2px solid rgba(249, 115, 22, 0.3);
             border-radius: 50%;
             animation: pulse-ring 2s ease-out infinite;
@@ -338,8 +336,8 @@
             <div class="glow-ring"></div>
             <div class="glow-ring"></div>
             <div class="logo-icon">
-                <!-- Try to load logo.jpg, fallback to text if not found -->
-                <img src="logo.jpg" alt="APE WAR" onerror="this.parentElement.innerHTML='<div class=\'logo-fallback\'>OW</div>'">
+                <!-- Try to load logo.png, fallback to text if not found -->
+                <img src="../Chimp%20War/logo.png" alt="APE WAR" onerror="this.parentElement.innerHTML='<div class=\'logo-fallback\'>AW</div>'">
             </div>
         </div>
 
@@ -431,36 +429,16 @@
         // This tracks key states directly in JavaScript and exposes them to Unity
         window.wasdKeyStates = { w: false, a: false, s: false, d: false };
 
-        // Unity Input Field Focus Bridge
-        // When true, Unity has an input field focused - allow all keys through
-        window.unityInputFieldFocused = false;
-
-        window.setUnityInputFieldFocus = function(focused) {
-            window.unityInputFieldFocused = focused;
-            // Clear WASD states when focusing to prevent stuck movement
-            if (focused) {
-                window.wasdKeyStates.w = false;
-                window.wasdKeyStates.a = false;
-                window.wasdKeyStates.s = false;
-                window.wasdKeyStates.d = false;
-            }
-        };
-
         document.addEventListener('keydown', function(e) {
             var key = e.key.toLowerCase();
-
-            // Only track WASD if Unity input field is NOT focused
-            if (!window.unityInputFieldFocused) {
-                if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
-                    window.wasdKeyStates[key] = true;
-                }
+            if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
+                window.wasdKeyStates[key] = true;
             }
 
             // Check if user is typing in a text input - if so, don't block keys
             var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
             var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
-                           (document.activeElement && document.activeElement.isContentEditable) ||
-                           window.unityInputFieldFocused;
+                           (document.activeElement && document.activeElement.isContentEditable);
 
             // Prevent browser shortcuts from intercepting game keys (only when not typing)
             if (!isTyping && ["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
@@ -481,9 +459,6 @@
             window.wasdKeyStates.a = false;
             window.wasdKeyStates.s = false;
             window.wasdKeyStates.d = false;
-            // Mark blur so pointerlockchange knows this isn't ESC
-            window.escPassthroughState.recentBlur = true;
-            setTimeout(function() { window.escPassthroughState.recentBlur = false; }, 300);
         });
 
         // Expose WASD states to Unity via jslib (legacy fallback)
@@ -494,20 +469,6 @@
         // Mouse Movement Bridge for Pointer Lock API
         // Tracks raw mouse movement deltas that work even at screen edges
         window.mouseMovementState = { deltaX: 0, deltaY: 0 };
-
-        // ESC Passthrough Bridge for Pointer Lock
-        // When ESC is pressed while pointer is locked, the browser consumes it to release
-        // pointer lock and Unity never sees the keydown. We detect ESC by distinguishing
-        // pointer lock loss causes: programmatic unlock vs blur vs browser ESC intercept.
-        window.escPassthroughState = { pendingEsc: false, programmaticUnlock: false, recentBlur: false };
-
-        // Monkey-patch document.exitPointerLock so we can distinguish programmatic unlocks
-        // (game code: death, chat, menus) from browser-initiated unlocks (ESC key).
-        var _origExitPointerLock = document.exitPointerLock.bind(document);
-        document.exitPointerLock = function() {
-            window.escPassthroughState.programmaticUnlock = true;
-            return _origExitPointerLock();
-        };
 
         document.addEventListener('mousemove', function(e) {
             // movementX/Y are raw deltas from Pointer Lock API
@@ -520,32 +481,12 @@
         window.addEventListener('blur', function() {
             window.mouseMovementState.deltaX = 0;
             window.mouseMovementState.deltaY = 0;
-            // Mark blur so pointerlockchange knows this isn't ESC
-            window.escPassthroughState.recentBlur = true;
-            setTimeout(function() { window.escPassthroughState.recentBlur = false; }, 300);
         });
 
-        // Detect ESC-caused pointer lock release by elimination:
-        // - If programmaticUnlock is set, game code released cursor (not ESC)
-        // - If recentBlur is set, user alt-tabbed or clicked outside (not ESC)
-        // - Otherwise, browser intercepted ESC to release pointer lock
+        // Also reset on pointer lock change (prevents residual deltas)
         document.addEventListener('pointerlockchange', function() {
             window.mouseMovementState.deltaX = 0;
             window.mouseMovementState.deltaY = 0;
-
-            if (document.pointerLockElement) {
-                // Pointer lock gained — clear stale flags
-                window.escPassthroughState.programmaticUnlock = false;
-            } else {
-                // Pointer lock lost
-                if (window.escPassthroughState.programmaticUnlock) {
-                    // Game code released cursor (death, menu, etc.) — not ESC
-                    window.escPassthroughState.programmaticUnlock = false;
-                } else if (!window.escPassthroughState.recentBlur) {
-                    // Not programmatic, not blur — must be ESC
-                    window.escPassthroughState.pendingEsc = true;
-                }
-            }
         });
 
         // Enhanced focus handling for Chrome and other browsers
@@ -563,11 +504,7 @@
 
         // Focus after any visibility change (tab switching)
         document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                // Tab hidden — mark blur so pointerlockchange knows this isn't ESC
-                window.escPassthroughState.recentBlur = true;
-                setTimeout(function() { window.escPassthroughState.recentBlur = false; }, 300);
-            } else {
+            if (!document.hidden) {
                 setTimeout(focusCanvas, 100);
             }
         });
@@ -580,17 +517,19 @@
             }, 5000);
         }
 
-        var buildUrl = "Build";
-        var buildVersion = "0.2";
+        var buildUrl = "../Chimp War/Build";
+        var buildVersion = "0.1.3"; // Increment with each deploy
         var cacheBuster = "?v=" + buildVersion;
-        var dataUrl = "https://apewar-data.alexander-loukine.workers.dev/OWBuild.data.unityweb" + cacheBuster;
-        var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
+
+        // DATA FILE: Proxied via Cloudflare Worker (adds CORS headers)
+        var dataUrl = "https://apewar-data.alexander-loukine.workers.dev/ChimpWar.data.unityweb" + cacheBuster;
+        var loaderUrl = buildUrl + "/Chimp War.loader.js" + cacheBuster;
         var config = {
             dataUrl: dataUrl,
-            frameworkUrl: buildUrl + "/OW Build.framework.js.unityweb" + cacheBuster,
-            codeUrl: buildUrl + "/OW Build.wasm.unityweb" + cacheBuster,
-            symbolsUrl: buildUrl + "/OW Build.symbols.json.unityweb" + cacheBuster,
-            streamingAssetsUrl: "StreamingAssets",
+            frameworkUrl: buildUrl + "/Chimp War.framework.js.unityweb" + cacheBuster,
+            codeUrl: buildUrl + "/Chimp War.wasm.unityweb" + cacheBuster,
+            symbolsUrl: buildUrl + "/Chimp War.symbols.json.unityweb" + cacheBuster,
+            streamingAssetsUrl: "../Chimp War/StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
             productVersion: "0.1",
