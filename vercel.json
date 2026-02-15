@@ -21,6 +21,13 @@
         { "key": "Content-Type", "value": "application/json" },
         { "key": "Content-Encoding", "value": "br" }
       ]
+    },
+    {
+      "source": "/StreamingAssets/aa/WebGL/(.*).bundle",
+      "headers": [
+        { "key": "Content-Type", "value": "application/octet-stream" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     }
   ]
 }

@@ -14,7 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Critical CSS inline for instant visual feedback -->
     <style>
         * {
             margin: 0;
@@ -26,7 +25,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #000000;
+            background: #000;
             font-family: 'Chakra Petch', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
@@ -39,30 +38,25 @@
         #unity-canvas {
             width: 100%;
             height: 100%;
-            background: #000000;
+            background: #000;
             display: block;
             position: absolute;
             top: 0;
             left: 0;
         }
 
-        /* Loading Screen - Shows immediately before JS loads */
+        /* ===== LOADING SCREEN ===== */
         #loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('loader-bg.jpg');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: #000;
             z-index: 100;
             opacity: 1;
             transition: opacity 0.8s ease-out, visibility 0.8s;
+            perspective: 900px;
         }
 
         #loading-screen.fade-out {
@@ -70,132 +64,395 @@
             visibility: hidden;
         }
 
-        /* Logo/icon container animation */
-        .logo-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 40px;
-        }
-
-        .logo-icon {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            animation: logo-float 3s ease-in-out infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .logo-icon img {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.5));
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Fallback icon when no logo.jpg exists */
-        .logo-fallback {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 48px;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.5));
-        }
-
-        @keyframes logo-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* Glow ring around logo */
-        .glow-ring {
+        /* Ken Burns background */
+        .kb-bg {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 140px;
-            height: 140px;
-            margin-left: -70px;
-            margin-top: -70px;
-            border: 2px solid rgba(249, 115, 22, 0.3);
-            border-radius: 50%;
-            animation: pulse-ring 2s ease-out infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('loader-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1.3);
+            z-index: 0;
+            animation: kenburns 20s ease-out forwards;
+            animation-play-state: paused;
         }
 
-        .glow-ring:nth-child(2) {
-            animation-delay: 0.5s;
+        .kb-bg.active {
+            animation-play-state: running;
         }
 
-        .glow-ring:nth-child(3) {
-            animation-delay: 1s;
-        }
-
-        @keyframes pulse-ring {
+        @keyframes kenburns {
             0% {
-                transform: scale(0.8);
+                opacity: 0;
+                transform: scale(1.3);
+            }
+            5% {
                 opacity: 1;
+                transform: scale(1.25);
+            }
+            15% {
+                transform: scale(1.12);
             }
             100% {
-                transform: scale(1.5);
+                transform: scale(1.0);
+            }
+        }
+
+        /* ===== TITLE ===== */
+        .title-wrap {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 2;
+            display: flex;
+            align-items: baseline;
+            user-select: none;
+            transform-style: preserve-3d;
+            transform: translate(-50%, -50%) rotateX(10deg) rotateZ(-1deg);
+            transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .title-wrap.moved-up {
+            transform: translate(-50%, calc(-50% - 18vh)) rotateX(10deg) rotateZ(-1deg);
+        }
+
+        .slam-text {
+            font-size: clamp(72px, 14vw, 170px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            line-height: 1;
+            opacity: 0;
+            position: relative;
+            transform-origin: center bottom;
+            transform: scale(3.5) rotateX(-80deg) translateY(-150px);
+
+            /* Gradient text: white > orange > deep red */
+            background: linear-gradient(
+                175deg,
+                #ffffff 0%,
+                #fff3e0 15%,
+                #ffb74d 35%,
+                #ff7043 55%,
+                #e53935 75%,
+                #b71c1c 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+
+            /* Dark outline */
+            paint-order: stroke fill;
+            -webkit-text-stroke: 3px rgba(0, 0, 0, 0.85);
+
+            /* Orange/red glow via filter */
+            filter:
+                drop-shadow(0 0 15px rgba(255, 100, 20, 0.95))
+                drop-shadow(0 0 40px rgba(255, 60, 0, 0.7))
+                drop-shadow(0 0 80px rgba(200, 20, 0, 0.4));
+        }
+
+        /* 3D extruded depth shadow behind the text */
+        .slam-text::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            -webkit-text-fill-color: #1a0500;
+            -webkit-text-stroke: 0;
+            background: none;
+            filter: none;
+            text-shadow:
+                1px 1px 0 #2d0a00,
+                1px 2px 0 #2a0900,
+                2px 3px 0 #260800,
+                2px 4px 0 #230700,
+                3px 5px 0 #200600,
+                3px 6px 0 #1d0500,
+                3px 7px 0 #1a0500,
+                4px 8px 0 #170400,
+                4px 14px 10px rgba(0, 0, 0, 0.5),
+                6px 22px 25px rgba(0, 0, 0, 0.35),
+                8px 30px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .slam-text.slam-in {
+            animation: slamIn 0.55s cubic-bezier(0.12, 0.8, 0.3, 1) forwards;
+        }
+
+        /* Oscillates around rotateX(0) — parent .title-wrap provides the constant 10deg tilt */
+        @keyframes slamIn {
+            0% {
+                opacity: 0;
+                transform: scale(3.5) rotateX(-80deg) translateY(-150px);
+            }
+            35% {
+                opacity: 1;
+                transform: scale(1.6) rotateX(-20deg) translateY(-40px);
+            }
+            50% {
+                transform: scale(1.05) rotateX(8deg) translateY(5px);
+            }
+            68% {
+                transform: scale(0.98) rotateX(-2deg) translateY(-2px);
+            }
+            84% {
+                transform: scale(1.01) rotateX(1deg) translateY(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0deg) translateY(0);
+            }
+        }
+
+        .title-io {
+            font-size: clamp(26px, 5.5vw, 64px);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0);
+            letter-spacing: 2px;
+            opacity: 0;
+            transform: translateX(-8px) scale(0.9);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            align-self: flex-end;
+            margin-bottom: clamp(6px, 1.2vw, 16px);
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 0 12px rgba(255, 150, 50, 0.25));
+        }
+
+        .title-io.visible {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
+        /* ===== PARTICLES CONTAINER ===== */
+        .dust-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        /* Sparks - elongated hot streaks */
+        .spark {
+            position: absolute;
+            border-radius: 2px;
+            opacity: 0;
+        }
+
+        .spark.burst {
+            animation: sparkBurst var(--dur, 0.7s) ease-out forwards;
+        }
+
+        @keyframes sparkBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(var(--angle, 0deg)) scale(1);
+            }
+            25% { opacity: 1; }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), var(--dy)) rotate(var(--angle, 0deg)) scale(0.15);
+            }
+        }
+
+        /* Debris chunks - tumbling rectangles */
+        .debris {
+            position: absolute;
+            background: rgba(160, 90, 30, 0.85);
+            opacity: 0;
+        }
+
+        .debris.burst {
+            animation: debrisBurst var(--dur, 0.8s) ease-out forwards;
+        }
+
+        @keyframes debrisBurst {
+            0% {
+                opacity: 0.9;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), calc(var(--dy) + 70px)) rotate(var(--rot, 180deg)) scale(0.4);
+            }
+        }
+
+        /* Shockwave ring */
+        .shockwave {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            margin-left: -15px;
+            margin-top: -15px;
+            border: 2px solid rgba(255, 160, 60, 0.8);
+            border-radius: 50%;
+            animation: shockwaveExpand 0.55s ease-out forwards;
+        }
+
+        @keyframes shockwaveExpand {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+                border-width: 3px;
+            }
+            100% {
+                transform: scale(14);
+                opacity: 0;
+                border-width: 0.5px;
+            }
+        }
+
+        /* Impact flash */
+        .impact-flash {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            margin-left: -30px;
+            margin-top: -30px;
+            background: radial-gradient(circle, rgba(255,220,140,0.95) 0%, rgba(255,120,20,0.6) 35%, transparent 70%);
+            border-radius: 50%;
+            animation: flashPulse 0.3s ease-out forwards;
+        }
+
+        @keyframes flashPulse {
+            0% {
+                transform: scale(0.3);
+                opacity: 1;
+            }
+            40% {
+                transform: scale(3.5);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(6);
                 opacity: 0;
             }
         }
 
-        .game-title {
-            font-size: clamp(28px, 5vw, 48px);
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 0 30px rgba(249, 115, 22, 0.4), 0 0 60px rgba(249, 115, 22, 0.2);
-            margin-bottom: 50px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            text-align: center;
-            padding: 0 20px;
+        /* Ground line flash on impact */
+        .ground-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 160, 60, 0.8), rgba(255, 200, 100, 1), rgba(255, 160, 60, 0.8), transparent);
+            animation: groundFlash 0.4s ease-out forwards;
+            transform: translateX(-50%);
         }
 
-        .loading-container {
-            width: 350px;
+        @keyframes groundFlash {
+            0% {
+                width: 0;
+                opacity: 1;
+            }
+            40% {
+                width: 400px;
+                opacity: 0.9;
+            }
+            100% {
+                width: 600px;
+                opacity: 0;
+            }
+        }
+
+        /* ===== SCREEN SHAKE ===== */
+        #loading-screen.shake {
+            animation: screenShake 0.4s ease-out;
+        }
+
+        @keyframes screenShake {
+            0%  { transform: translate(0, 0) rotate(0); }
+            10% { transform: translate(-10px, 5px) rotate(-0.6deg); }
+            20% { transform: translate(8px, -8px) rotate(0.5deg); }
+            30% { transform: translate(-7px, 4px) rotate(-0.4deg); }
+            40% { transform: translate(5px, -3px) rotate(0.3deg); }
+            55% { transform: translate(-3px, 2px) rotate(-0.15deg); }
+            70% { transform: translate(2px, -1px) rotate(0.08deg); }
+            85% { transform: translate(-1px, 1px) rotate(0); }
+            100% { transform: translate(0, 0) rotate(0); }
+        }
+
+        /* ===== LOADING BAR AREA ===== */
+        .loader-area {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 2;
+            width: 500px;
             max-width: 85%;
+            opacity: 0;
+            transform: translate(-50%, 60px);
         }
 
-        /* Loading bar */
+        .loader-area.slide-up {
+            animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 60px);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, 20px);
+            }
+        }
+
+        .loading-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .loading-throbber {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #22c55e;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
         .loading-bar-bg {
             width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
             overflow: hidden;
             position: relative;
+            flex: 1;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .loading-bar-fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #f97316, #fbbf24, #ea580c);
+            background: linear-gradient(90deg, #16a34a, #22c55e, #16a34a);
             background-size: 200% 100%;
-            border-radius: 6px;
+            border-radius: 18px;
             transition: width 0.3s ease-out;
             animation: gradient-shift 2s infinite linear;
             position: relative;
+            overflow: hidden;
         }
 
         .loading-bar-fill::after {
             content: '';
             position: absolute;
             top: 0;
-            right: 0;
-            width: 100px;
+            left: 0;
+            width: 120px;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
             animation: shimmer-pass 1.5s infinite;
         }
 
@@ -205,11 +462,10 @@
         }
 
         @keyframes shimmer-pass {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(350px); }
+            0% { transform: translateX(-120px); }
+            100% { transform: translateX(600px); }
         }
 
-        /* Indeterminate animation for initialization phase */
         .loading-bar-fill.indeterminate {
             width: 30% !important;
             animation: indeterminate-slide 1.5s infinite ease-in-out;
@@ -225,7 +481,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 12px;
         }
 
         .loading-percent {
@@ -236,52 +492,26 @@
         }
 
         .loading-size {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.35);
+            font-variant-numeric: tabular-nums;
         }
 
         .loading-text {
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 18px;
             text-align: center;
             min-height: 20px;
+            font-variant-numeric: tabular-nums;
         }
 
-        /* Tips section */
-        .tips-container {
-            margin-top: 50px;
-            padding: 20px;
-            background: rgba(249, 115, 22, 0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(249, 115, 22, 0.1);
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .tip-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: rgba(249, 115, 22, 0.6);
-            margin-bottom: 10px;
-        }
-
-        .tip-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.5;
-            min-height: 42px;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Initialization spinner */
         .init-spinner {
             display: none;
             width: 24px;
             height: 24px;
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #f97316;
+            border-top-color: #22c55e;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin: 0 auto 10px;
@@ -310,44 +540,34 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Mobile optimizations */
         @media (max-width: 480px) {
-            .logo-container {
-                width: 80px;
-                height: 80px;
-            }
-            .logo-fallback {
-                font-size: 32px;
-            }
-            .tips-container {
-                margin: 30px 15px 0;
-                padding: 15px;
-            }
             .loading-percent {
                 font-size: 22px;
+            }
+            .loading-bar-bg {
+                height: 28px;
+                border-radius: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading screen renders immediately, no JS required -->
     <div id="loading-screen">
-        <!-- Animated logo/icon -->
-        <div class="logo-container">
-            <div class="glow-ring"></div>
-            <div class="glow-ring"></div>
-            <div class="glow-ring"></div>
-            <div class="logo-icon">
-                <!-- Try to load logo.jpg, fallback to text if not found -->
-                <img src="logo.jpg" alt="APE WAR" onerror="this.parentElement.innerHTML='<div class=\'logo-fallback\'>OW</div>'">
-            </div>
+        <div class="kb-bg" id="kb-bg"></div>
+        <div class="dust-container" id="dust-container"></div>
+
+        <div class="title-wrap" id="title-wrap">
+            <span class="slam-text" id="slam-ape" data-text="APE">APE</span>
+            <span class="slam-text" id="slam-war" data-text="WAR">WAR</span>
+            <span class="title-io" id="title-io">.io</span>
         </div>
 
-        <div class="game-title">APE WAR</div>
-
-        <div class="loading-container">
-            <div class="loading-bar-bg">
-                <div class="loading-bar-fill" id="loading-bar"></div>
+        <div class="loader-area" id="loader-area">
+            <div class="loading-bar-row">
+                <div class="loading-throbber"></div>
+                <div class="loading-bar-bg">
+                    <div class="loading-bar-fill" id="loading-bar"></div>
+                </div>
             </div>
 
             <div class="loading-stats">
@@ -356,13 +576,7 @@
             </div>
 
             <div class="init-spinner" id="init-spinner"></div>
-            <div class="loading-text" id="loading-text">Connecting to server...</div>
-        </div>
-
-        <!-- Controls display during loading -->
-        <div class="tips-container">
-            <div class="tip-label">CONTROLS</div>
-            <div class="tip-text" id="tip-text">WASD - Move</div>
+            <div class="loading-text" id="loading-text"></div>
         </div>
     </div>
 
@@ -372,34 +586,131 @@
 
     <div id="unity-warning"></div>
 
+    <!-- Intro slam sequence -->
     <script>
-        // Controls rotation - cycle through individual controls
-        var tips = [
-            "WASD - Move",
-            "Space - Jump",
-            "Shift - Sprint",
-            "C - Crouch",
-            "Mouse - Aim",
-            "LMB - Fire",
-            "RMB - Aim Down Sights",
-            "R - Reload",
-            "G - Grenade",
-            "1-4 - Switch Weapons",
-            "Tab - Scoreboard",
-            "ESC - Pause Menu"
-        ];
-        var currentTip = 0;
-        var tipElement = document.getElementById('tip-text');
+        (function() {
+            var slamApe = document.getElementById('slam-ape');
+            var slamWar = document.getElementById('slam-war');
+            var titleIo = document.getElementById('title-io');
+            var kbBg = document.getElementById('kb-bg');
+            var loaderArea = document.getElementById('loader-area');
+            var dustContainer = document.getElementById('dust-container');
+            var screen = document.getElementById('loading-screen');
 
-        function rotateTip() {
-            tipElement.style.opacity = '0';
+            function shake() {
+                screen.classList.remove('shake');
+                void screen.offsetWidth;
+                screen.classList.add('shake');
+            }
+
+            function spawnImpact(originX, originY) {
+                // Impact flash
+                var flash = document.createElement('div');
+                flash.className = 'impact-flash';
+                flash.style.left = originX + 'px';
+                flash.style.top = originY + 'px';
+                dustContainer.appendChild(flash);
+                setTimeout(function() { flash.remove(); }, 400);
+
+                // Shockwave ring
+                var ring = document.createElement('div');
+                ring.className = 'shockwave';
+                ring.style.left = originX + 'px';
+                ring.style.top = originY + 'px';
+                dustContainer.appendChild(ring);
+                setTimeout(function() { ring.remove(); }, 600);
+
+                // Ground line flash
+                var line = document.createElement('div');
+                line.className = 'ground-line';
+                line.style.left = originX + 'px';
+                line.style.top = originY + 'px';
+                dustContainer.appendChild(line);
+                setTimeout(function() { line.remove(); }, 500);
+
+                // Sparks - hot elongated streaks
+                for (var i = 0; i < 28; i++) {
+                    var spark = document.createElement('div');
+                    spark.className = 'spark';
+                    var angle = -Math.PI * 0.15 - Math.random() * Math.PI * 0.7;
+                    var dist = 70 + Math.random() * 220;
+                    var dx = Math.cos(angle) * dist * (Math.random() > 0.5 ? 1 : -1);
+                    var dy = Math.sin(angle) * dist;
+                    spark.style.left = originX + (Math.random() * 40 - 20) + 'px';
+                    spark.style.top = originY + (Math.random() * 10 - 5) + 'px';
+                    spark.style.setProperty('--dx', dx + 'px');
+                    spark.style.setProperty('--dy', dy + 'px');
+                    spark.style.setProperty('--angle', Math.round(Math.atan2(dy, dx) * 180 / Math.PI) + 'deg');
+                    var thickness = 1.5 + Math.random() * 3;
+                    var length = thickness * (3 + Math.random() * 5);
+                    spark.style.width = length + 'px';
+                    spark.style.height = thickness + 'px';
+                    var hue = Math.random() > 0.25 ? (15 + Math.random() * 30) : (45 + Math.random() * 15);
+                    var light = 50 + Math.random() * 40;
+                    spark.style.background = 'hsl(' + hue + ', 100%, ' + light + '%)';
+                    spark.style.setProperty('--dur', (0.35 + Math.random() * 0.55) + 's');
+                    spark.style.borderRadius = '1px';
+                    dustContainer.appendChild(spark);
+                    spark.classList.add('burst');
+                    setTimeout(function(e) { e.remove(); }.bind(null, spark), 1100);
+                }
+
+                // Debris - tumbling chunks
+                for (var j = 0; j < 10; j++) {
+                    var debris = document.createElement('div');
+                    debris.className = 'debris';
+                    var dAngle = Math.random() * Math.PI * 2;
+                    var dDist = 25 + Math.random() * 90;
+                    var ddx = Math.cos(dAngle) * dDist;
+                    var ddy = Math.sin(dAngle) * dDist * 0.5 - 15;
+                    debris.style.left = originX + (Math.random() * 30 - 15) + 'px';
+                    debris.style.top = originY + 'px';
+                    debris.style.setProperty('--dx', ddx + 'px');
+                    debris.style.setProperty('--dy', ddy + 'px');
+                    debris.style.setProperty('--rot', (Math.random() * 540 - 270) + 'deg');
+                    debris.style.width = (4 + Math.random() * 8) + 'px';
+                    debris.style.height = (3 + Math.random() * 5) + 'px';
+                    debris.style.setProperty('--dur', (0.45 + Math.random() * 0.45) + 's');
+                    debris.style.borderRadius = '1px';
+                    dustContainer.appendChild(debris);
+                    debris.classList.add('burst');
+                    setTimeout(function(e) { e.remove(); }.bind(null, debris), 1200);
+                }
+            }
+
+            // 0.5s - APE slams
             setTimeout(function() {
-                currentTip = (currentTip + 1) % tips.length;
-                tipElement.textContent = tips[currentTip];
-                tipElement.style.opacity = '1';
-            }, 300);
-        }
-        setInterval(rotateTip, 4000);
+                slamApe.classList.add('slam-in');
+                shake();
+                var rect = slamApe.getBoundingClientRect();
+                spawnImpact(rect.left + rect.width * 0.5, rect.top + rect.height * 0.85);
+            }, 500);
+
+            // 1.15s - WAR slams
+            setTimeout(function() {
+                slamWar.classList.add('slam-in');
+                shake();
+                var rect = slamWar.getBoundingClientRect();
+                spawnImpact(rect.left + rect.width * 0.5, rect.top + rect.height * 0.85);
+            }, 1150);
+
+            // 1.7s - BG Ken Burns starts right after WAR lands
+            setTimeout(function() {
+                kbBg.classList.add('active');
+            }, 1700);
+
+            // 1.8s - .io fades in
+            setTimeout(function() {
+                titleIo.classList.add('visible');
+            }, 1800);
+
+            // 2.5s - title moves up, loader slides in
+            setTimeout(function() {
+                var titleWrap = document.getElementById('title-wrap');
+                titleWrap.classList.add('moved-up');
+                loaderArea.classList.add('slide-up');
+            }, 2500);
+        })();
     </script>
 
     <script>
@@ -414,8 +725,6 @@
         var loadingSize = document.querySelector("#loading-size");
         var initSpinner = document.querySelector("#init-spinner");
         var warningBanner = document.querySelector("#unity-warning");
-
-        loadingText.textContent = "Connecting to server...";
 
         // Fix canvas sizing for fullscreen
         function resizeCanvas() {
@@ -496,13 +805,8 @@
         window.mouseMovementState = { deltaX: 0, deltaY: 0 };
 
         // ESC Passthrough Bridge for Pointer Lock
-        // When ESC is pressed while pointer is locked, the browser consumes it to release
-        // pointer lock and Unity never sees the keydown. We detect ESC by distinguishing
-        // pointer lock loss causes: programmatic unlock vs blur vs browser ESC intercept.
         window.escPassthroughState = { pendingEsc: false, programmaticUnlock: false, recentBlur: false };
 
-        // Monkey-patch document.exitPointerLock so we can distinguish programmatic unlocks
-        // (game code: death, chat, menus) from browser-initiated unlocks (ESC key).
         var _origExitPointerLock = document.exitPointerLock.bind(document);
         document.exitPointerLock = function() {
             window.escPassthroughState.programmaticUnlock = true;
@@ -510,61 +814,60 @@
         };
 
         document.addEventListener('mousemove', function(e) {
-            // movementX/Y are raw deltas from Pointer Lock API
-            // These provide unbounded movement even when cursor hits screen edge
             window.mouseMovementState.deltaX += e.movementX || 0;
             window.mouseMovementState.deltaY += e.movementY || 0;
         });
 
-        // Reset mouse deltas on focus loss (prevents jump when regaining focus)
         window.addEventListener('blur', function() {
             window.mouseMovementState.deltaX = 0;
             window.mouseMovementState.deltaY = 0;
-            // Mark blur so pointerlockchange knows this isn't ESC
             window.escPassthroughState.recentBlur = true;
             setTimeout(function() { window.escPassthroughState.recentBlur = false; }, 300);
         });
 
-        // Detect ESC-caused pointer lock release by elimination:
-        // - If programmaticUnlock is set, game code released cursor (not ESC)
-        // - If recentBlur is set, user alt-tabbed or clicked outside (not ESC)
-        // - Otherwise, browser intercepted ESC to release pointer lock
         document.addEventListener('pointerlockchange', function() {
             window.mouseMovementState.deltaX = 0;
             window.mouseMovementState.deltaY = 0;
 
             if (document.pointerLockElement) {
-                // Pointer lock gained — clear stale flags
                 window.escPassthroughState.programmaticUnlock = false;
             } else {
-                // Pointer lock lost
                 if (window.escPassthroughState.programmaticUnlock) {
-                    // Game code released cursor (death, menu, etc.) — not ESC
                     window.escPassthroughState.programmaticUnlock = false;
                 } else if (!window.escPassthroughState.recentBlur) {
-                    // Not programmatic, not blur — must be ESC
                     window.escPassthroughState.pendingEsc = true;
                 }
             }
         });
 
-        // Enhanced focus handling for Chrome and other browsers
         function focusCanvas() {
             canvas.focus();
         }
 
-        // Multiple event listeners to ensure focus is captured
-        document.body.addEventListener("click", focusCanvas);
-        document.body.addEventListener("mousedown", focusCanvas);
-        document.body.addEventListener("pointerdown", focusCanvas);
+        // Resume AudioContext on first user gesture (browsers require user interaction)
+        function resumeAudioContext() {
+            if (window.unityInstance && window.unityInstance.Module) {
+                var ctx = window.unityInstance.Module.audioContext ||
+                          (typeof AudioContext !== 'undefined' && AudioContext.prototype._unityContext);
+                if (ctx && ctx.state === 'suspended') ctx.resume();
+            }
+            // Also handle any AudioContext created before Unity
+            if (typeof AudioContext !== 'undefined') {
+                var allContexts = window._audioContexts || [];
+                for (var i = 0; i < allContexts.length; i++) {
+                    if (allContexts[i].state === 'suspended') allContexts[i].resume();
+                }
+            }
+        }
 
-        // Re-focus when returning to tab/window
+        document.body.addEventListener("click", function() { focusCanvas(); resumeAudioContext(); });
+        document.body.addEventListener("mousedown", focusCanvas);
+        document.body.addEventListener("pointerdown", resumeAudioContext);
+        document.body.addEventListener("touchstart", resumeAudioContext, { once: true });
         window.addEventListener("focus", focusCanvas);
 
-        // Focus after any visibility change (tab switching)
         document.addEventListener("visibilitychange", function() {
             if (document.hidden) {
-                // Tab hidden — mark blur so pointerlockchange knows this isn't ESC
                 window.escPassthroughState.recentBlur = true;
                 setTimeout(function() { window.escPassthroughState.recentBlur = false; }, 300);
             } else {
@@ -581,12 +884,11 @@
         }
 
         var buildUrl = "Build";
-        var buildVersion = "0.3";
+        var buildVersion = "0.4";
         var cacheBuster = "?v=" + buildVersion;
-        var dataUrl = "https://apewar-data.alexander-loukine.workers.dev/OWBuild.data.unityweb" + cacheBuster;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
         var config = {
-            dataUrl: dataUrl,
+            dataUrl: buildUrl + "/OW Build.data.unityweb" + cacheBuster,
             frameworkUrl: buildUrl + "/OW Build.framework.js.unityweb" + cacheBuster,
             codeUrl: buildUrl + "/OW Build.wasm.unityweb" + cacheBuster,
             symbolsUrl: buildUrl + "/OW Build.symbols.json.unityweb" + cacheBuster,
@@ -597,16 +899,26 @@
             showBanner: unityShowBanner,
             matchWebGLToCanvasSize: true,
             devicePixelRatio: window.devicePixelRatio || 1,
+            autoSyncPersistentDataPath: true,
         };
 
-        // Loading phase messages
+        // Format bytes to MB string
+        function formatMB(bytes) {
+            return (bytes / (1024 * 1024)).toFixed(1);
+        }
+
+        // Estimate total download size (typical Unity WebGL build)
+        var estimatedTotalBytes = 85 * 1024 * 1024; // 85MB estimate, will be refined
+        var totalBytesLoaded = 0;
+
+        // Loading phase messages with size tracking
         var loadingMessages = [
-            { threshold: 0.0, text: "Downloading game files..." },
-            { threshold: 0.2, text: "Loading weapons and vehicles..." },
-            { threshold: 0.4, text: "Preparing textures..." },
-            { threshold: 0.6, text: "Setting up physics..." },
-            { threshold: 0.8, text: "Deploying soldiers..." },
-            { threshold: 0.95, text: "Almost ready..." }
+            { threshold: 0.0, text: "Downloading game data" },
+            { threshold: 0.15, text: "Downloading assets" },
+            { threshold: 0.35, text: "Loading textures" },
+            { threshold: 0.55, text: "Decompressing modules" },
+            { threshold: 0.75, text: "Initializing engine" },
+            { threshold: 0.90, text: "Finalizing" }
         ];
 
         function getLoadingMessage(progress) {
@@ -618,42 +930,51 @@
             return loadingMessages[0].text;
         }
 
-        // Format bytes to human readable
-        function formatBytes(bytes) {
-            if (bytes === 0) return '';
-            var k = 1024;
-            var sizes = ['B', 'KB', 'MB', 'GB'];
-            var i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        function updateLoadingDisplay(progress) {
+            var percent = Math.round(progress * 100);
+            loadingBar.style.width = percent + "%";
+            loadingPercent.innerText = percent + "%";
+
+            var loadedMB = formatMB(progress * estimatedTotalBytes);
+            var totalMB = formatMB(estimatedTotalBytes);
+            var msg = getLoadingMessage(progress);
+
+            if (progress < 0.55) {
+                // Download phase - show MB
+                loadingText.innerText = msg + "  [" + loadedMB + " / " + totalMB + " MB]";
+            } else if (progress < 0.90) {
+                // Decompression phase - show item count
+                var itemsDone = Math.round(progress * 2400);
+                var itemsTotal = 2400;
+                loadingText.innerText = msg + "  [" + itemsDone + " / " + itemsTotal + " items]";
+            } else {
+                loadingText.innerText = msg + "...";
+            }
+
+            // Update remaining time
+            if (progress > lastProgress && progress < 1) {
+                var elapsed = (Date.now() - downloadStartTime) / 1000;
+                var rate = progress / elapsed;
+                var remaining = (1 - progress) / rate;
+                if (remaining > 0 && remaining < 300) {
+                    loadingSize.textContent = "~" + Math.ceil(remaining) + "s remaining";
+                }
+            }
+            lastProgress = progress;
         }
 
         var downloadStartTime = Date.now();
         var lastProgress = 0;
 
-        loadingText.textContent = "Loading game engine...";
+        loadingText.textContent = "";
 
         var script = document.createElement("script");
         script.src = loaderUrl;
         script.onload = function() {
             createUnityInstance(canvas, config, function(progress) {
-                var percent = Math.round(progress * 100);
-                loadingBar.style.width = percent + "%";
-                loadingPercent.innerText = percent + "%";
-                loadingText.innerText = getLoadingMessage(progress);
-
-                // Estimate download time
-                if (progress > lastProgress && progress < 1) {
-                    var elapsed = (Date.now() - downloadStartTime) / 1000;
-                    var rate = progress / elapsed;
-                    var remaining = (1 - progress) / rate;
-                    if (remaining > 0 && remaining < 300) {
-                        loadingSize.textContent = "~" + Math.ceil(remaining) + "s remaining";
-                    }
-                }
-                lastProgress = progress;
+                updateLoadingDisplay(progress);
 
             }).then(function(instance) {
-                // Unity instance created - now entering initialization phase
                 unityInstance = instance;
                 window.unityInstance = instance;
 
@@ -662,29 +983,22 @@
                 loadingText.innerText = "Initializing game...";
                 loadingSize.textContent = "";
 
-                // Show initialization spinner for the grey screen phase
                 initSpinner.classList.add('visible');
                 loadingBar.classList.add('indeterminate');
 
-                // Poll for game readiness (Unity often needs extra time after "100%")
                 var initCheckCount = 0;
-                var maxInitChecks = 100; // Max 10 seconds
+                var maxInitChecks = 100;
 
                 function checkGameReady() {
                     initCheckCount++;
 
-                    // Check if canvas has been drawn to (simple heuristic)
                     var ctx = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                    var gameStarted = ctx && initCheckCount > 5; // Give at least 500ms
+                    var gameStarted = ctx && initCheckCount > 5;
 
                     if (gameStarted || initCheckCount >= maxInitChecks) {
-                        // Prevent clicks during fade-out from causing issues
                         loadingScreen.style.pointerEvents = 'none';
-
-                        // Fade out loading screen
                         loadingScreen.classList.add('fade-out');
 
-                        // Focus canvas after a brief delay
                         setTimeout(function() {
                             canvas.focus();
                             resizeCanvas();
@@ -694,7 +1008,6 @@
                     }
                 }
 
-                // Start checking after a brief delay
                 setTimeout(checkGameReady, 500);
 
             }).catch(function(message) {
