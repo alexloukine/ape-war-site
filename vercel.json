@@ -2,21 +2,48 @@
   "trailingSlash": true,
   "headers": [
     {
-      "source": "/(.*).wasm.unityweb",
+      "source": "/Build/(.*).wasm.unityweb",
+      "headers": [
+        { "key": "Content-Type", "value": "application/wasm" },
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    },
+    {
+      "source": "/Build/(.*).framework.js.unityweb",
+      "headers": [
+        { "key": "Content-Type", "value": "application/javascript" },
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    },
+    {
+      "source": "/Build/(.*).symbols.json.unityweb",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    },
+    {
+      "source": "/Build/(.*).data.unityweb",
+      "headers": [
+        { "key": "Content-Encoding", "value": "gzip" }
+      ]
+    },
+    {
+      "source": "/Chimp War/Build/(.*).wasm.unityweb",
       "headers": [
         { "key": "Content-Type", "value": "application/wasm" },
         { "key": "Content-Encoding", "value": "br" }
       ]
     },
     {
-      "source": "/(.*).framework.js.unityweb",
+      "source": "/Chimp War/Build/(.*).framework.js.unityweb",
       "headers": [
         { "key": "Content-Type", "value": "application/javascript" },
         { "key": "Content-Encoding", "value": "br" }
       ]
     },
     {
-      "source": "/(.*).symbols.json.unityweb",
+      "source": "/Chimp War/Build/(.*).symbols.json.unityweb",
       "headers": [
         { "key": "Content-Type", "value": "application/json" },
         { "key": "Content-Encoding", "value": "br" }
