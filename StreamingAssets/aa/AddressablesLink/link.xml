@@ -79,12 +79,10 @@
     <type fullname="bl_SpawnPoint" preserve="all" />
     <type fullname="bl_SpawnPointManager" preserve="all" />
     <type fullname="bl_SpectatorMode" preserve="all" />
-    <type fullname="bl_TankInput" preserve="all" />
     <type fullname="bl_TeamDeathMatch" preserve="all" />
     <type fullname="bl_TerrainSurfaces" preserve="all" />
     <type fullname="bl_UIReferences" preserve="all" />
     <type fullname="bl_VehicleCameraSettings" preserve="all" />
-    <type fullname="bl_WeaponFX" preserve="all" />
     <type fullname="bl_WeaponLoadoutUI" preserve="all" />
     <type fullname="BlCarController_RES2" preserve="all" />
     <type fullname="BloodEffectsPack.KillEffect" preserve="all" />
@@ -132,7 +130,6 @@
     <type fullname="MFPS.Runtime.Level.bl_Ladder" preserve="all" />
     <type fullname="MFPS.Runtime.Level.bl_MedicalKit" preserve="all" />
     <type fullname="MFPS.Runtime.Misc.bl_AFK" preserve="all" />
-    <type fullname="MFPS.Runtime.Misc.bl_ParticleFader" preserve="all" />
     <type fullname="MFPS.Runtime.Network.bl_PingTracker" preserve="all" />
     <type fullname="MFPS.Runtime.Settings.bl_ResolutionSettings" preserve="all" />
     <type fullname="MFPS.Runtime.Settings.bl_RuntimeSettings" preserve="all" />
@@ -155,16 +152,9 @@
     <type fullname="MFPS.Runtime.Vehicles.bl_CarController" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_CarInput" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_CarWheel" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankAudio" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankCannon" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankController" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_TankCrosshair" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_TankInteriorCamera" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankProjectile" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_TankStateUI" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankSyncer" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankTrack" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankTurret" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleCamera" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleCameraHolder" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleCameraRig" preserve="all" />
@@ -174,7 +164,6 @@
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleManager" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleSeats" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleSeatTrigger" preserve="all" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_VehicleTransformView" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleTriggersManager" preserve="all" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleUI" preserve="all" />
     <type fullname="MFPS.Tween.bl_TweenCurveAlpha" preserve="all" />
@@ -210,11 +199,6 @@
     <type fullname="MFPS.Internal.Vehicles.VehicleSteerWheel" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Runtime.Settings.bl_RuntimeSettings/WindowUI" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Runtime.Settings.bl_SingleSettingsBinding/OnChange" preserve="nothing" serialized="true" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_CaterpillaMotion" preserve="nothing" serialized="true" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_CaterpillaMotion/MaterialScaleAxi" preserve="nothing" serialized="true" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankCannon/FireTargetMode" preserve="nothing" serialized="true" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TankTurret/UpAxis" preserve="nothing" serialized="true" />
-    <type fullname="MFPS.Runtime.Vehicles.bl_TrackWheel" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Runtime.Vehicles.bl_VehicleSeatTrigger/TriggerTarget" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Tween.EasingMode" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Tween.EasingType" preserve="nothing" serialized="true" />
