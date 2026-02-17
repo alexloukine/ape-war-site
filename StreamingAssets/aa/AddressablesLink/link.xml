@@ -43,6 +43,7 @@
     <type fullname="bl_GrenadeLauncherProjectile" preserve="all" />
     <type fullname="bl_GunPickUp" preserve="all" />
     <type fullname="bl_GunPickUpManager" preserve="all" />
+    <type fullname="bl_InGameWeaponSwitcher" preserve="all" />
     <type fullname="bl_InputInteractionIndicator" preserve="all" />
     <type fullname="bl_ItemFloater" preserve="all" />
     <type fullname="bl_ItemManager" preserve="all" />
@@ -91,6 +92,7 @@
     <type fullname="BoatController" preserve="all" />
     <type fullname="BuildingLevel" preserve="all" />
     <type fullname="BuildingManager" preserve="all" />
+    <type fullname="CosmeticsDebugUI" preserve="all" />
     <type fullname="CyberRevolution.BreakableObjectsSystem.Scripts.Breakable.BreakableObject" preserve="all" />
     <type fullname="CyberRevolution.BreakableObjectsSystem.Scripts.Breakable.BrokenObject" preserve="all" />
     <type fullname="CyberRevolution.BreakableObjectsSystem.Scripts.Breakable.BrokenObjectCollection" preserve="all" />
@@ -102,6 +104,7 @@
     <type fullname="FPSCounter" preserve="all" />
     <type fullname="HelicopterDialManager" preserve="all" />
     <type fullname="HUDSway" preserve="all" />
+    <type fullname="LoadoutDebugUI" preserve="all" />
     <type fullname="LowPolyProceduralTexture" preserve="all" />
     <type fullname="MapCamoSelectInstance" preserve="all" />
     <type fullname="MFPS.Audio.bl_AudioBank" preserve="all" />
@@ -173,6 +176,8 @@
     <type fullname="PauseMenuV2" preserve="all" />
     <type fullname="PhotonPingCounter" preserve="all" />
     <type fullname="PowerUp" preserve="all" />
+    <type fullname="Purchaseable" preserve="all" />
+    <type fullname="QuickMatchButtonEffects" preserve="all" />
     <type fullname="RBScanner" preserve="all" />
     <type fullname="RigidbodyEmulator" preserve="all" />
     <type fullname="RPC_CarHonk" preserve="all" />
@@ -399,12 +404,14 @@
     <type fullname="UnityEngine.UI.CanvasScaler" preserve="all" />
     <type fullname="UnityEngine.UI.ContentSizeFitter" preserve="all" />
     <type fullname="UnityEngine.UI.GraphicRaycaster" preserve="all" />
+    <type fullname="UnityEngine.UI.GridLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.HorizontalLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.Image" preserve="all" />
     <type fullname="UnityEngine.UI.LayoutElement" preserve="all" />
     <type fullname="UnityEngine.UI.Mask" preserve="all" />
     <type fullname="UnityEngine.UI.Outline" preserve="all" />
     <type fullname="UnityEngine.UI.RawImage" preserve="all" />
+    <type fullname="UnityEngine.UI.RectMask2D" preserve="all" />
     <type fullname="UnityEngine.UI.Scrollbar" preserve="all" />
     <type fullname="UnityEngine.UI.ScrollRect" preserve="all" />
     <type fullname="UnityEngine.UI.Selectable" preserve="all" />

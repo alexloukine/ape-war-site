@@ -821,6 +821,16 @@
         var initSpinner = document.querySelector("#init-spinner");
         var warningBanner = document.querySelector("#unity-warning");
 
+        // Skip loading screen immediately (used when game is fully loaded before intro finishes)
+        function skipLoadingScreen() {
+            loadingScreen.style.pointerEvents = 'none';
+            loadingScreen.classList.add('fade-out');
+            setTimeout(function() {
+                canvas.focus();
+                resizeCanvas();
+            }, 100);
+        }
+
         // Fix canvas sizing for fullscreen
         function resizeCanvas() {
             canvas.style.width = window.innerWidth + "px";
@@ -979,7 +989,7 @@
         }
 
         var buildUrl = "Build";
-        var buildVersion = "0.5";
+        var buildVersion = "0.6";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
         var config = {
@@ -1073,6 +1083,14 @@
                 unityInstance = instance;
                 window.unityInstance = instance;
 
+                // Fast path: if WebGL context is already available (cached load), skip immediately
+                var immediateCtx = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                if (immediateCtx) {
+                    skipLoadingScreen();
+                    return;
+                }
+
+                // Slow path: game still initializing, show spinner and poll
                 loadingBar.style.width = "100%";
                 loadingPercent.innerText = "100%";
                 loadingText.innerText = "Initializing game...";
@@ -1092,13 +1110,7 @@
                     var gameStarted = cachedCtx && initCheckCount > 5;
 
                     if (gameStarted || initCheckCount >= maxInitChecks) {
-                        loadingScreen.style.pointerEvents = 'none';
-                        loadingScreen.classList.add('fade-out');
-
-                        setTimeout(function() {
-                            canvas.focus();
-                            resizeCanvas();
-                        }, 100);
+                        skipLoadingScreen();
                     } else {
                         setTimeout(checkGameReady, 100);
                     }
