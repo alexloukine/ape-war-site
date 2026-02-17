@@ -844,6 +844,7 @@
         // Chrome has issues with Unity's WebGL input handling for certain keys
         // This tracks key states directly in JavaScript and exposes them to Unity
         window.wasdKeyStates = { w: false, a: false, s: false, d: false };
+        window.keyStates = {};
 
         // Unity Input Field Focus Bridge
         // When true, Unity has an input field focused - allow all keys through
@@ -851,24 +852,18 @@
 
         window.setUnityInputFieldFocus = function(focused) {
             window.unityInputFieldFocused = focused;
-            // Clear WASD states when focusing to prevent stuck movement
+            // Clear all key states when focusing to prevent stuck movement
             if (focused) {
                 window.wasdKeyStates.w = false;
                 window.wasdKeyStates.a = false;
                 window.wasdKeyStates.s = false;
                 window.wasdKeyStates.d = false;
+                for (var k in window.keyStates) window.keyStates[k] = false;
             }
         };
 
         document.addEventListener('keydown', function(e) {
             var key = e.key.toLowerCase();
-
-            // Only track WASD if Unity input field is NOT focused
-            if (!window.unityInputFieldFocused) {
-                if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
-                    window.wasdKeyStates[key] = true;
-                }
-            }
 
             // Check if user is typing in a text input - if so, don't block keys
             var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
@@ -876,25 +871,64 @@
                            (document.activeElement && document.activeElement.isContentEditable) ||
                            window.unityInputFieldFocused;
 
+            // Track all keys via code (only when not typing)
+            if (!isTyping) {
+                if (e.code) window.keyStates[e.code] = true;
+                // Backward compat: also write WASD to legacy object
+                if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
+                    window.wasdKeyStates[key] = true;
+                }
+            }
+
+            // When typing, neutralize preventDefault so Emscripten can't block
+            // character input to Unity's hidden <input> element
+            if (isTyping) {
+                e.preventDefault = function() {};
+                return;
+            }
+
             // Prevent browser shortcuts from intercepting game keys (only when not typing)
-            if (!isTyping && ["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
+            if (["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
                 e.preventDefault();
             }
         }, true);
 
         document.addEventListener('keyup', function(e) {
             var key = e.key.toLowerCase();
+            // Track all keys via code
+            if (e.code) window.keyStates[e.code] = false;
+            // Backward compat: also write WASD to legacy object
             if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
                 window.wasdKeyStates[key] = false;
             }
+            // Neutralize preventDefault when typing so Emscripten doesn't block
+            var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+            var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
+                           (document.activeElement && document.activeElement.isContentEditable) ||
+                           window.unityInputFieldFocused;
+            if (isTyping) {
+                e.preventDefault = function() {};
+            }
         }, true);
 
-        // Reset WASD states when window loses focus (prevents stuck keys)
+        // Keypress neutralizer - prevents Emscripten from blocking character input
+        document.addEventListener('keypress', function(e) {
+            var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+            var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
+                           (document.activeElement && document.activeElement.isContentEditable) ||
+                           window.unityInputFieldFocused;
+            if (isTyping) {
+                e.preventDefault = function() {};
+            }
+        }, true);
+
+        // Reset key states when window loses focus (prevents stuck keys)
         window.addEventListener('blur', function() {
             window.wasdKeyStates.w = false;
             window.wasdKeyStates.a = false;
             window.wasdKeyStates.s = false;
             window.wasdKeyStates.d = false;
+            for (var k in window.keyStates) window.keyStates[k] = false;
             // Mark blur so pointerlockchange knows this isn't ESC
             window.escPassthroughState.recentBlur = true;
             setTimeout(function() { window.escPassthroughState.recentBlur = false; }, 300);
@@ -946,6 +980,12 @@
         });
 
         function focusCanvas() {
+            if (window.unityInputFieldFocused) return;
+            var active = document.activeElement;
+            if (active && active !== canvas &&
+                (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+                return;
+            }
             canvas.focus();
         }
 
@@ -989,7 +1029,7 @@
         }
 
         var buildUrl = "Build";
-        var buildVersion = "0.6";
+        var buildVersion = "0.7";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
         var config = {
