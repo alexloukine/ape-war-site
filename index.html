@@ -850,6 +850,55 @@
         // When true, Unity has an input field focused - allow all keys through
         window.unityInputFieldFocused = false;
 
+        // Intercept ALL keyboard event listener registrations.
+        // Wraps every handler so it's skipped when an input field is focused.
+        // This prevents Emscripten/InputSystem from even seeing keyboard events during typing.
+        (function() {
+            var kbEvents = {keydown:1, keyup:1, keypress:1};
+            var handlerMap = new WeakMap();
+            var origAdd = EventTarget.prototype.addEventListener;
+            var origRemove = EventTarget.prototype.removeEventListener;
+
+            EventTarget.prototype.addEventListener = function(type, handler, opts) {
+                if (kbEvents[type] && typeof handler === 'function') {
+                    var wrapped = function(e) {
+                        if (window.unityInputFieldFocused) return;
+                        return handler.apply(this, arguments);
+                    };
+                    handlerMap.set(handler, wrapped);
+                    return origAdd.call(this, type, wrapped, opts);
+                }
+                return origAdd.call(this, type, handler, opts);
+            };
+
+            EventTarget.prototype.removeEventListener = function(type, handler, opts) {
+                if (kbEvents[type] && typeof handler === 'function' && handlerMap.has(handler)) {
+                    return origRemove.call(this, type, handlerMap.get(handler), opts);
+                }
+                return origRemove.call(this, type, handler, opts);
+            };
+        })();
+
+        // Prototype-level overrides: prevent Emscripten from blocking keyboard input to Unity's hidden <input>
+        (function() {
+            var origPreventDefault = Event.prototype.preventDefault;
+            var origStopPropagation = Event.prototype.stopPropagation;
+            var origStopImmediate = Event.prototype.stopImmediatePropagation;
+
+            Event.prototype.preventDefault = function() {
+                if (window.unityInputFieldFocused && this instanceof KeyboardEvent) return;
+                return origPreventDefault.call(this);
+            };
+            Event.prototype.stopPropagation = function() {
+                if (window.unityInputFieldFocused && this instanceof KeyboardEvent) return;
+                return origStopPropagation.call(this);
+            };
+            Event.prototype.stopImmediatePropagation = function() {
+                if (window.unityInputFieldFocused && this instanceof KeyboardEvent) return;
+                return origStopImmediate.call(this);
+            };
+        })();
+
         window.setUnityInputFieldFocus = function(focused) {
             window.unityInputFieldFocused = focused;
             // Clear all key states when focusing to prevent stuck movement
@@ -874,51 +923,22 @@
             // Track all keys via code (only when not typing)
             if (!isTyping) {
                 if (e.code) window.keyStates[e.code] = true;
-                // Backward compat: also write WASD to legacy object
                 if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
                     window.wasdKeyStates[key] = true;
                 }
             }
 
-            // When typing, neutralize preventDefault so Emscripten can't block
-            // character input to Unity's hidden <input> element
-            if (isTyping) {
-                e.preventDefault = function() {};
-                return;
-            }
-
             // Prevent browser shortcuts from intercepting game keys (only when not typing)
-            if (["KeyA", "KeyD", "KeyW", "KeyS", "Space", "KeyE", "KeyR", "KeyG", "KeyC", "KeyX", "KeyZ", "Tab", "Escape"].includes(e.code)) {
+            if (!isTyping && ["KeyA","KeyD","KeyW","KeyS","Space","KeyE","KeyR","KeyG","KeyC","KeyX","KeyZ","Tab","Escape"].includes(e.code)) {
                 e.preventDefault();
             }
         }, true);
 
         document.addEventListener('keyup', function(e) {
             var key = e.key.toLowerCase();
-            // Track all keys via code
             if (e.code) window.keyStates[e.code] = false;
-            // Backward compat: also write WASD to legacy object
             if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
                 window.wasdKeyStates[key] = false;
-            }
-            // Neutralize preventDefault when typing so Emscripten doesn't block
-            var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-            var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
-                           (document.activeElement && document.activeElement.isContentEditable) ||
-                           window.unityInputFieldFocused;
-            if (isTyping) {
-                e.preventDefault = function() {};
-            }
-        }, true);
-
-        // Keypress neutralizer - prevents Emscripten from blocking character input
-        document.addEventListener('keypress', function(e) {
-            var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-            var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
-                           (document.activeElement && document.activeElement.isContentEditable) ||
-                           window.unityInputFieldFocused;
-            if (isTyping) {
-                e.preventDefault = function() {};
             }
         }, true);
 
@@ -1029,7 +1049,7 @@
         }
 
         var buildUrl = "Build";
-        var buildVersion = "0.7";
+        var buildVersion = "0.8";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
         var config = {
