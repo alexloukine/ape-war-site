@@ -77,7 +77,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('loader-bg.jpg');
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/loader-bg.jpg');
             background-size: cover;
             background-position: center;
             opacity: 0;
@@ -1059,7 +1059,7 @@
             }, 5000);
         }
 
-        var buildUrl = "Build";
+        var buildUrl = "/Build";
         var buildVersion = "0.9";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
@@ -1067,7 +1067,7 @@
             dataUrl: buildUrl + "/OW Build.data.unityweb" + cacheBuster,
             frameworkUrl: buildUrl + "/OW Build.framework.js.unityweb" + cacheBuster,
             codeUrl: buildUrl + "/OW Build.wasm.unityweb" + cacheBuster,
-            streamingAssetsUrl: "StreamingAssets",
+            streamingAssetsUrl: "/StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
             productVersion: "0.1",
