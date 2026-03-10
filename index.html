@@ -9,6 +9,12 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+    <!-- Xsolla Pay Station Widget -->
+    <script src="https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.3/widget.min.js"></script>
+
+    <!-- AppLixir Rewarded Video Ads SDK -->
+    <script src="https://cdn.applixir.com/applixir.sdk.js"></script>
+
     <!-- Chakra Petch font (military style) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -840,6 +846,32 @@
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
+        // Xsolla Pay Station Bridge
+        window.xsollaPayStation = { lastStatus: '', lastError: '' };
+        window.xsollaOpenPayStation = function(accessToken, isSandbox) {
+            window.xsollaPayStation.lastStatus = '';
+            window.xsollaPayStation.lastError = '';
+            if (document.exitPointerLock) document.exitPointerLock();
+            try {
+                XPayStationWidget.init({
+                    access_token: accessToken,
+                    sandbox: !!isSandbox,
+                    lightbox: { zIndex: 10000, overlayOpacity: 0.85 }
+                });
+                XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS_DONE, function() {
+                    window.xsollaPayStation.lastStatus = 'done';
+                });
+                XPayStationWidget.on(XPayStationWidget.eventTypes.CLOSE, function() {
+                    if (!window.xsollaPayStation.lastStatus) window.xsollaPayStation.lastStatus = 'close';
+                });
+                XPayStationWidget.open();
+            } catch (e) {
+                console.error('[XsollaPayStation] Failed to open:', e);
+                window.xsollaPayStation.lastStatus = 'error';
+                window.xsollaPayStation.lastError = e.message || 'Unknown error';
+            }
+        };
+
         // WASD Input Bridge for Chrome WebGL fix
         // Chrome has issues with Unity's WebGL input handling for certain keys
         // This tracks key states directly in JavaScript and exposes them to Unity
@@ -850,34 +882,10 @@
         // When true, Unity has an input field focused - allow all keys through
         window.unityInputFieldFocused = false;
 
-        // Intercept ALL keyboard event listener registrations.
-        // Wraps every handler so it's skipped when an input field is focused.
-        // This prevents Emscripten/InputSystem from even seeing keyboard events during typing.
-        (function() {
-            var kbEvents = {keydown:1, keyup:1, keypress:1};
-            var handlerMap = new WeakMap();
-            var origAdd = EventTarget.prototype.addEventListener;
-            var origRemove = EventTarget.prototype.removeEventListener;
-
-            EventTarget.prototype.addEventListener = function(type, handler, opts) {
-                if (kbEvents[type] && typeof handler === 'function') {
-                    var wrapped = function(e) {
-                        if (window.unityInputFieldFocused) return;
-                        return handler.apply(this, arguments);
-                    };
-                    handlerMap.set(handler, wrapped);
-                    return origAdd.call(this, type, wrapped, opts);
-                }
-                return origAdd.call(this, type, handler, opts);
-            };
-
-            EventTarget.prototype.removeEventListener = function(type, handler, opts) {
-                if (kbEvents[type] && typeof handler === 'function' && handlerMap.has(handler)) {
-                    return origRemove.call(this, type, handlerMap.get(handler), opts);
-                }
-                return origRemove.call(this, type, handler, opts);
-            };
-        })();
+        // NOTE: The Chrome macOS WASD fix is handled by the keyStates tracking below
+        // + WASDInputBridge.jslib + bl_WebGLInputBridge.cs. Game input during typing is
+        // blocked by bl_WebGLInputBridge returning false/0 + the isTyping check in keydown.
+        // No addEventListener wrapper needed — it was blocking Emscripten's text input pipeline.
 
         // Prototype-level overrides: prevent Emscripten from blocking keyboard input to Unity's hidden <input>
         (function() {
@@ -918,7 +926,9 @@
             var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
             var isTyping = (activeTag === 'input' || activeTag === 'textarea') ||
                            (document.activeElement && document.activeElement.isContentEditable) ||
-                           window.unityInputFieldFocused;
+                           window.unityInputFieldFocused ||
+                           // Fallback: detect Unity's hidden text input element in the DOM
+                           document.querySelector('#unity-container input, #unity-container textarea') !== null;
 
             // Track all keys via code (only when not typing)
             if (!isTyping) {
@@ -928,8 +938,9 @@
                 }
             }
 
-            // Prevent browser shortcuts from intercepting game keys (only when not typing)
-            if (!isTyping && ["KeyA","KeyD","KeyW","KeyS","Space","KeyE","KeyR","KeyG","KeyC","KeyX","KeyZ","Tab","Escape"].includes(e.code)) {
+            // Prevent browser defaults that interfere with gameplay (scroll, focus change)
+            // Letter keys have no browser default on a canvas so they don't need preventDefault
+            if (!isTyping && (e.code === 'Space' || e.code === 'Tab' || e.code === 'Escape')) {
                 e.preventDefault();
             }
         }, true);
@@ -1049,14 +1060,13 @@
         }
 
         var buildUrl = "Build";
-        var buildVersion = "0.8";
+        var buildVersion = "0.9";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
         var config = {
             dataUrl: buildUrl + "/OW Build.data.unityweb" + cacheBuster,
             frameworkUrl: buildUrl + "/OW Build.framework.js.unityweb" + cacheBuster,
             codeUrl: buildUrl + "/OW Build.wasm.unityweb" + cacheBuster,
-            symbolsUrl: buildUrl + "/OW Build.symbols.json.unityweb" + cacheBuster,
             streamingAssetsUrl: "StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
