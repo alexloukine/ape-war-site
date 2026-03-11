@@ -1060,7 +1060,7 @@
         }
 
         var buildUrl = "/Build";
-        var buildVersion = "0.9";
+        var buildVersion = "1.1";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
         var config = {
@@ -1083,7 +1083,7 @@
         }
 
         // Estimate total download size (typical Unity WebGL build)
-        var estimatedTotalBytes = 85 * 1024 * 1024; // 85MB estimate, will be refined
+        var estimatedTotalBytes = 14 * 1024 * 1024; // 14MB estimate, will be refined
         var totalBytesLoaded = 0;
 
         // Loading phase messages with size tracking
