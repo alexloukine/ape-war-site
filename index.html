@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>apewar.io</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>chimpwar.io</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="shortcut icon" type="image/png" href="favicon.png">
 
     <!-- Xsolla Pay Station Widget -->
     <script src="https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.3/widget.min.js"></script>
@@ -73,6 +73,28 @@
             visibility: hidden;
         }
 
+        /* Ken Burns background */
+        .kb-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('loader-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1.1);
+            z-index: 0;
+            animation: kenburns 20s ease-out forwards;
+        }
+
+        @keyframes kenburns {
+            0% { opacity: 0; transform: scale(1.1); }
+            5% { opacity: 1; transform: scale(1.08); }
+            100% { opacity: 1; transform: scale(1.0); }
+        }
+
         /* ===== TITLE ===== */
         .title-text {
             font-size: clamp(48px, 10vw, 120px);
@@ -84,6 +106,7 @@
             animation: fadeIn 0.8s ease-out 0.2s forwards;
             margin-bottom: 48px;
             user-select: none;
+            z-index: 1;
         }
 
         .title-text .title-io {
@@ -105,6 +128,7 @@
             max-width: 80%;
             opacity: 0;
             animation: fadeIn 0.6s ease-out 0.5s forwards;
+            z-index: 1;
         }
 
         .loading-bar-bg {
@@ -203,7 +227,8 @@
 </head>
 <body>
     <div id="loading-screen">
-        <div class="title-text">APEWAR<span class="title-io">.io</span></div>
+        <div class="kb-bg"></div>
+        <div class="title-text">CHIMPWAR<span class="title-io">.io</span></div>
 
         <div class="loader-area" id="loader-area">
             <div class="loading-bar-bg">
@@ -471,15 +496,15 @@
             }, 5000);
         }
 
-        var buildUrl = "/Build";
-        var buildVersion = "1.7";
+        var buildUrl = "Build";
+        var buildVersion = "0.1";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
         var config = {
-            dataUrl: buildUrl + "/OW Build.data.unityweb" + cacheBuster,
-            frameworkUrl: buildUrl + "/OW Build.framework.js.unityweb" + cacheBuster,
-            codeUrl: buildUrl + "/OW Build.wasm.unityweb" + cacheBuster,
-            streamingAssetsUrl: "/StreamingAssets",
+            dataUrl: buildUrl + "/OW Build.data" + cacheBuster,
+            frameworkUrl: buildUrl + "/OW Build.framework.js" + cacheBuster,
+            codeUrl: buildUrl + "/OW Build.wasm" + cacheBuster,
+            streamingAssetsUrl: "StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
             productVersion: "0.1",

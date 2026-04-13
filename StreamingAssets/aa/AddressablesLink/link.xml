@@ -276,6 +276,9 @@
     <type fullname="AdvancedHelicopterControllerwithShooting.RadarTypeInfo" preserve="nothing" serialized="true" />
     <type fullname="CyberRevolution.BreakableObjectsSystem.Scripts.Breakable.BreakableObjectParams" preserve="nothing" serialized="true" />
     <type fullname="DestructibleTreeCreator/FadeSettings" preserve="nothing" serialized="true" />
+    <type fullname="DestructibleTreeCreator/LODCreatorSettings" preserve="nothing" serialized="true" />
+    <type fullname="DestructibleTreeCreator/LODCreatorSettings/LODLevel" preserve="nothing" serialized="true" />
+    <type fullname="DestructibleTreeCreator/SplitSettings" preserve="nothing" serialized="true" />
     <type fullname="LowPolyProceduralTexture/ChildOriginalState" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Audio.bl_AudioBank/AudioInfo" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Audio.bl_VirtualAudioController" preserve="nothing" serialized="true" />
