@@ -11,6 +11,7 @@
     <type fullname="AdvancedHelicopterControllerwithShooting.MissileScript" preserve="all" />
     <type fullname="AdvancedHelicopterControllerwithShooting.RadarSystem" preserve="all" />
     <type fullname="AdvancedHelicopterControllerwithShooting.SimpleJoystick" preserve="all" />
+    <type fullname="AllCosmetics" preserve="all" />
     <type fullname="AmmoKitApplier" preserve="all" />
     <type fullname="AudioSO" preserve="all" />
     <type fullname="BananadevButton" preserve="all" />
@@ -297,6 +298,7 @@
     <type fullname="MFPS.Tween.EasingMode" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Tween.EasingType" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Tween.bl_TweenBase/TweenOrigin" preserve="nothing" serialized="true" />
+    <type fullname="MFPS.Tween.bl_TweenBase/UEvent" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Tween.bl_TweenCurveAlpha/OnFinish" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Tween.bl_TweenCurveScale/OnFinish" preserve="nothing" serialized="true" />
     <type fullname="MFPSPlayer" preserve="nothing" serialized="true" />
@@ -323,6 +325,7 @@
     <type fullname="PlayerAbilityVisualisation/AbilityVisualisation" preserve="nothing" serialized="true" />
     <type fullname="bl_CameraRay/CastMethod" preserve="nothing" serialized="true" />
     <type fullname="bl_FPArmsMaterial/TeamMaterial" preserve="nothing" serialized="true" />
+    <type fullname="bl_FirstPersonController/LerpControlledBob" preserve="nothing" serialized="true" />
     <type fullname="bl_FootStepsLibrary/AudioGroup" preserve="nothing" serialized="true" />
     <type fullname="bl_Gun/BulletInstanceMethod" preserve="nothing" serialized="true" />
     <type fullname="bl_Gun/ReloadPer" preserve="nothing" serialized="true" />
@@ -390,6 +393,7 @@
     <type fullname="UnityEngine.Rendering.Universal.UniversalAdditionalCameraData" preserve="all" />
     <type fullname="UnityEngine.Rendering.Universal.UniversalAdditionalLightData" preserve="all" />
     <type fullname="UnityEngine.Rendering.Universal.Vignette" preserve="all" />
+    <type fullname="UnityEngine.Rendering.Universal.BloomFilterModeParameter" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.Universal.DownscaleParameter" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.Universal.HDRACESPresetParameter" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Rendering.Universal.MotionBlurModeParameter" preserve="nothing" serialized="true" />
@@ -486,6 +490,7 @@
     <type fullname="UnityEngine.Events.PersistentListenerMode" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Events.UnityEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.RectOffset" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.RenderingLayerMask" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.ParticleSystem" preserve="all" />
