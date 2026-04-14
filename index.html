@@ -2,6 +2,7 @@
 <html lang="en-us">
 <head>
     <meta charset="utf-8">
+    <base href="/">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -589,42 +590,7 @@
             }).then(function(instance) {
                 unityInstance = instance;
                 window.unityInstance = instance;
-
-                // Fast path: if WebGL context is already available (cached load), skip immediately
-                var immediateCtx = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                if (immediateCtx) {
-                    skipLoadingScreen();
-                    return;
-                }
-
-                // Slow path: game still initializing, show spinner and poll
-                loadingBar.style.width = "100%";
-                loadingPercent.innerText = "100%";
-                loadingText.innerText = "Initializing game...";
-                loadingSize.textContent = "";
-
-                initSpinner.classList.add('visible');
-                loadingBar.classList.add('indeterminate');
-
-                var initCheckCount = 0;
-                var maxInitChecks = 100;
-                var cachedCtx = null;
-
-                function checkGameReady() {
-                    initCheckCount++;
-
-                    if (!cachedCtx) cachedCtx = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                    var gameStarted = cachedCtx && initCheckCount > 5;
-
-                    if (gameStarted || initCheckCount >= maxInitChecks) {
-                        skipLoadingScreen();
-                    } else {
-                        setTimeout(checkGameReady, 100);
-                    }
-                }
-
-                setTimeout(checkGameReady, 500);
-
+                skipLoadingScreen();
             }).catch(function(message) {
                 loadingText.innerText = "Error loading game";
                 initSpinner.classList.remove('visible');
