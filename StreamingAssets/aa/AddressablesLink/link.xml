@@ -302,6 +302,8 @@
     <type fullname="MFPS.Tween.bl_TweenCurveAlpha/OnFinish" preserve="nothing" serialized="true" />
     <type fullname="MFPS.Tween.bl_TweenCurveScale/OnFinish" preserve="nothing" serialized="true" />
     <type fullname="MFPSPlayer" preserve="nothing" serialized="true" />
+    <type fullname="PriceConfiguration" preserve="nothing" serialized="true" />
+    <type fullname="RarityPriceTable" preserve="nothing" serialized="true" />
     <type fullname="bl_Crosshair/WeaponCrosshair" preserve="nothing" serialized="true" />
     <type fullname="bl_DamageArea/AreaType" preserve="nothing" serialized="true" />
     <type fullname="bl_DropDispacher/DropInfo" preserve="nothing" serialized="true" />
