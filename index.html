@@ -497,7 +497,7 @@
             }, 5000);
         }
 
-        var buildUrl = "Build";
+        var buildUrl = "/Build";
         var buildVersion = "0.1";
         var cacheBuster = "?v=" + buildVersion;
         var loaderUrl = buildUrl + "/OW Build.loader.js" + cacheBuster;
@@ -505,7 +505,7 @@
             dataUrl: buildUrl + "/OW Build.data.unityweb" + cacheBuster,
             frameworkUrl: buildUrl + "/OW Build.framework.js.unityweb" + cacheBuster,
             codeUrl: buildUrl + "/OW Build.wasm.unityweb" + cacheBuster,
-            streamingAssetsUrl: "StreamingAssets",
+            streamingAssetsUrl: "/StreamingAssets",
             companyName: "DefaultCompany",
             productName: "APE WAR",
             productVersion: "0.1",
