@@ -145,6 +145,7 @@
     <type fullname="CapeManager" preserve="all" />
     <type fullname="ControlsHintSystem" preserve="all" />
     <type fullname="CosmeticsDebugUI" preserve="all" />
+    <type fullname="CubeLODCreator" preserve="all" />
     <type fullname="CyberRevolution.BreakableObjectsSystem.Scripts.Breakable.BreakableObject" preserve="all" />
     <type fullname="CyberRevolution.BreakableObjectsSystem.Scripts.Breakable.BrokenObject" preserve="all" />
     <type fullname="CyberRevolution.BreakableObjectsSystem.Scripts.Breakable.BrokenObjectCollection" preserve="all" />
@@ -172,6 +173,7 @@
     <type fullname="LowPolyProceduralTexture" preserve="all" />
     <type fullname="MapCamoSelectInstance" preserve="all" />
     <type fullname="MedKitHealer" preserve="all" />
+    <type fullname="MeshDecimator" preserve="all" />
     <type fullname="MFPS.Addon.ScopePro.bl_ScopeProWeapon" preserve="all" />
     <type fullname="MFPS.Audio.bl_AudioBank" preserve="all" />
     <type fullname="MFPS.Audio.bl_AudioController" preserve="all" />
@@ -259,6 +261,7 @@
     <type fullname="QuickMatchButtonEffects" preserve="all" />
     <type fullname="RBScanner" preserve="all" />
     <type fullname="ReloadSoundPasser" preserve="all" />
+    <type fullname="RemoveInteriorFaces" preserve="all" />
     <type fullname="RigidbodyEmulator" preserve="all" />
     <type fullname="RPC_CarHonk" preserve="all" />
     <type fullname="SC_Vefects_Delete_After_Time" preserve="all" />
