@@ -140,6 +140,7 @@
     <type fullname="BloodVFX.EffectController" preserve="all" />
     <type fullname="BoatAudioPhoton" preserve="all" />
     <type fullname="BoatController" preserve="all" />
+    <type fullname="BotTestingOverride" preserve="all" />
     <type fullname="BuildingLevel" preserve="all" />
     <type fullname="BuildingManager" preserve="all" />
     <type fullname="CapeManager" preserve="all" />
@@ -324,6 +325,7 @@
     <type fullname="bl_SpawnPointManager/SpawnMode" preserve="nothing" serialized="true" />
     <type fullname="bl_TerrainSurfaces/TerrainSurface" preserve="nothing" serialized="true" />
     <type fullname="bl_WeaponLoadoutUIBase/VisibilityMode" preserve="nothing" serialized="true" />
+    <type fullname="DestructibleTreeCreator/LODLevelStats" preserve="nothing" serialized="true" />
     <type fullname="ControlsHintSystem/ControlHint" preserve="nothing" serialized="true" />
     <type fullname="HitBoxInfo" preserve="nothing" serialized="true" />
     <type fullname="MFPS.PlayerController.MouseLook" preserve="nothing" serialized="true" />
@@ -482,6 +484,7 @@
     <type fullname="UnityEngine.Object" preserve="all" />
     <type fullname="UnityEngine.OcclusionArea" preserve="all" />
     <type fullname="UnityEngine.RectTransform" preserve="all" />
+    <type fullname="UnityEngine.ReflectionProbe" preserve="all" />
     <type fullname="UnityEngine.RenderSettings" preserve="all" />
     <type fullname="UnityEngine.RenderTexture" preserve="all" />
     <type fullname="UnityEngine.Shader" preserve="all" />
