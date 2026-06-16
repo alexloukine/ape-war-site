@@ -1,7 +1,0 @@
-- Copied Build/ files (data, framework, loader, symbols, wasm) to ape-war-site/Build/
-- Copied StreamingAssets/aa/ dir (Addressables catalog + 2 map bundles + 2 small bundles)
-- Replaced index.html w/ new slam-effect loader, added favicons, bumped cache to v0.4
-- dataUrl now points to local Build/ (no more Cloudflare Worker for new build)
-- Updated vercel.json: gzip encoding for /Build/, br for /Chimp War/Build/, CORS for .bundle
-- Removed data.unityweb from .gitignore (18MB now, fits in git)
-- Committed + pushed to trigger Vercel deploy
